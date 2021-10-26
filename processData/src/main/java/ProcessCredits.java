@@ -17,9 +17,10 @@ public class ProcessCredits {
     public static List<String> description = new ArrayList<String>();
     public static Map<String, Integer> directorsIdMap = new HashMap<>();
     public static Map<String, Integer> actorsIdMap = new HashMap<>();
+    public static Map<String, Integer> keywordsIdMap = new HashMap<>();
 
     public static void getMovieTable() throws FileNotFoundException {
-        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/processData/OutputData/Movies_output.txt");
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Movies_output.csv");
         for (int i = 0; i < imdb_title_id.size(); i++){
             out.println(imdb_title_id.get(i) + "," + title.get(i) + "," + year.get(i) + "," + duration.get(i)+ ","
                     + language.get(i)+ "," + description.get(i));
@@ -28,14 +29,14 @@ public class ProcessCredits {
     }
 
     public static void getDirectorTable() throws FileNotFoundException {
-        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/processData/OutputData/Directors_output.txt");
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Directors_output.csv");
         List<String[]> DirectorList = new ArrayList<>();
         for (String aMovieDirector: directors){
             String[] tokens = aMovieDirector.split(",");
             DirectorList.add(tokens);
         }
         out.println("DirectorId,DirectorName");
-        int id = 0;
+        int id = 1;
         for (int i = 1; i < imdb_title_id.size(); i++){
             for (String t: DirectorList.get(i)){
                 t = t.replace("\"", "").strip();
@@ -49,14 +50,14 @@ public class ProcessCredits {
     }
 
     public static void getActorTable() throws FileNotFoundException {
-        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/processData/OutputData/Actors_output.txt");
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Actors_output.csv");
         List<String[]> actorList = new ArrayList<>();
         for (String anActor: actors){
             String[] tokens = anActor.split(",");
             actorList.add(tokens);
         }
         out.println("ActorId,ActorName");
-        int actorId = 0;
+        int actorId = 1;
         for (int i = 1; i < imdb_title_id.size(); i++){
             for (String t: actorList.get(i)){
                 t = t.replace("\"", "").strip();
@@ -71,7 +72,7 @@ public class ProcessCredits {
     }
 
     public static void getCollaborationTable() throws FileNotFoundException {
-        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/processData/OutputData/Collaboration_output.txt");
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Collaboration_output.csv");
         out.println("imdb_title_id,ActorId,ActorName,DirectorId,DirectorName");
         List<String[]> DirectorList = new ArrayList<>();
         for (String aMovieDirector: directors){
@@ -91,6 +92,45 @@ public class ProcessCredits {
                     out.println(i + "," + actorsIdMap.get(t_actor) + "," + t_actor + ","
                             + directorsIdMap.get(t_director) + "," + t_director);
                 }
+            }
+        }
+        out.close();
+    }
+
+    public static void getKeywordsTable() throws FileNotFoundException {
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Keywords_output.csv");
+        List<String[]> keywordList = new ArrayList<>();
+        for (String keywords: genre){
+            String[] tokens = keywords.split(",");
+            keywordList.add(tokens);
+        }
+        out.println("KeywordsId,KeywordName");
+        int keywordsId = 1;
+        for (int i = 1; i < imdb_title_id.size(); i++){
+            for (String t: keywordList.get(i)){
+                t = t.replace("\"", "").strip();
+                if (!keywordsIdMap.containsKey(t) && t!="") keywordsIdMap.put(t, keywordsId++);
+            }
+        }
+        for (Map.Entry<String,Integer> entry : keywordsIdMap.entrySet()){
+            out.println(entry.getValue()+","+entry.getKey());
+        }
+        out.close();
+    }
+
+    public static void getKeywordsInMovieTable() throws FileNotFoundException{
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/KeywordsInMovie_output.csv");
+        List<String[]> keywordList = new ArrayList<>();
+        for (String keywords: genre){
+            String[] tokens = keywords.split(",");
+            keywordList.add(tokens);
+        }
+        out.println("KeywordsInMovieId,KeywordsId,imdb_title_id");
+        int keywordsInMovieId = 1;
+        for (int i = 1; i < imdb_title_id.size(); i++){
+            for (String t: keywordList.get(i)){
+                t = t.replace("\"", "").strip();
+                out.println(keywordsInMovieId++ + "," + keywordsIdMap.get(t) + "," + imdb_title_id.get(i));
             }
         }
         out.close();
@@ -128,11 +168,13 @@ public class ProcessCredits {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        String path = "/Users/victoria/Desktop/5200/processData/InputData/IMDb movies.csv";
+        String path = "/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/InputData/IMDb movies.csv";
         readFile(path);
         getMovieTable();
         getDirectorTable();
         getActorTable();
         getCollaborationTable();
+        getKeywordsTable();
+        getKeywordsInMovieTable();
     }
 }
