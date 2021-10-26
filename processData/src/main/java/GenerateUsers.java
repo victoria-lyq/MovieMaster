@@ -1,10 +1,14 @@
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class GenerateUsers {
-    final String emailLexicon = "ABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890";
+    final String emailLexicon = "abcdefghijklmnopqrstuvwxyz12345674890";
+    final String userNameLexicon = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12345674890!@#$%^&*()_{}:;?/";
     final String nameLexicon = "abcdefghijklmnopqrstuvwxyz";
     final java.util.Random rand = new java.util.Random();
 
@@ -39,20 +43,46 @@ public class GenerateUsers {
     public List<String> generateRandomUserName(int num){
         List<String> userList = new ArrayList<>();
         while(userList.size() < num){
-            String name = randomGenerate(emailLexicon);
+            String name = randomGenerate(userNameLexicon);
             if(!userList.contains(name)) userList.add(name);
         }
         return userList;
     }
 
-    public String generateRandomName(){
-        String first = randomGenerate(nameLexicon);
-        String last = randomGenerate(nameLexicon);
-        return first + " " + last;
+    public List<String> generateRandomName(int num){
+        List<String> nameList = new ArrayList<>();
+        while(nameList.size() < num) {
+            String name = randomGenerate(nameLexicon);
+            nameList.add(name);
+        }
+        return nameList;
     }
 
-    public static void main(String[] args) {
-        GenerateUsers test = new GenerateUsers();
+    public List<String> generatePhoneNumber(int num){
+        List<String> phoneList = new ArrayList<>();
+        while(phoneList.size() < num) {
+            long number = (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+            if(!phoneList.contains(number)) phoneList.add(String.valueOf(number));
+        }
+        return phoneList;
+    }
 
+    public static void main(String[] args) throws IOException {
+        GenerateUsers test = new GenerateUsers();
+        List<String> emailList = test.generateRandomEmail(30);
+        List<String> userList = test.generateRandomUserName(30);
+        List<String> passwordList = test.generateRandomUserName(30);
+        List<String> firstNameList = test.generateRandomName(30);
+        List<String> lastNameList = test.generateRandomName(30);
+        List<String> phoneList = test.generatePhoneNumber(30);
+        PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Users_output.csv");
+        int id = 1;
+        out.println("UserId,UserName,Password,FirstName,LastName,Phone,Email");
+        for (int i = 0; i < 30; i++) {
+            out.println(id++ + "," + userList.get(i) + "," + passwordList.get(i) + "," +
+                    firstNameList.get(i) + "," + lastNameList.get(i) + "," + phoneList.get(i) + ","
+                    + emailList.get(i));
+        }
+        out.close();
     }
 }
