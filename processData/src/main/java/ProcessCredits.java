@@ -107,7 +107,7 @@ public class ProcessCredits {
 
     public static void getCollaborationTable() throws FileNotFoundException {
         PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Collaboration_output.csv");
-        out.println("MovieId,ActorId,ActorName,DirectorId,DirectorName");
+        out.println("CollaborationId,MovieId,ActorId,ActorName,DirectorId,DirectorName");
         List<String[]> DirectorList = new ArrayList<>();
         for (String aMovieDirector: directors){
             String[] tokens = aMovieDirector.split(",");
@@ -118,12 +118,13 @@ public class ProcessCredits {
             String[] tokens = anActor.split(",");
             actorList.add(tokens);
         }
+        int id = 1;
         for (int i = 1; i < imdb_title_id.size(); i++){
             for (String t_director: DirectorList.get(i)) {
                 t_director = t_director.replace("\"", "").strip();
                 for (String t_actor : actorList.get(i)) {
                     t_actor = t_actor.replace("\"", "").strip();
-                    out.println(imdb_title_id.get(i) + "," + actorsIdMap.get(t_actor) + "," + t_actor + ","
+                    out.println(id++ + "," + imdb_title_id.get(i) + "," + actorsIdMap.get(t_actor) + "," + t_actor + ","
                             + directorsIdMap.get(t_director) + "," + t_director);
                 }
             }
