@@ -172,7 +172,7 @@ public class ProcessCredits {
 
 
     public static void main(String[] args) throws FileNotFoundException {
-        String path = "/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/InputData/movie_sample.csv";
+        String path = "/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/InputData/IMDb movies.csv";
         readFile(path);
         getMovieTable();
         getDirectorTable();
