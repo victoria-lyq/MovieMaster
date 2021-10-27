@@ -1,6 +1,6 @@
-GenerateRating.java
- GenerateRating
-GenerateUsers.java
- GenerateUsers
 ProcessCredits.java
  ProcessCredits
+GenerateUsers.java
+ GenerateUsers
+GenerateRating.java
+ GenerateRating
