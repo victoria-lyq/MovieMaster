@@ -169,8 +169,6 @@ public class ProcessCredits {
         out.close();
     }
 
-
-
     public static void main(String[] args) throws FileNotFoundException {
         String path = "/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/InputData/IMDb movies.csv";
         readFile(path);
