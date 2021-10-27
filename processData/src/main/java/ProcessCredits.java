@@ -53,6 +53,7 @@ public class ProcessCredits {
     public static void getMovieTable() throws FileNotFoundException {
         PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Movies_output.csv");
         int id = 1;
+        out.println("MovieId,Title,Year,Duration,Language,Description");
         for (int i = 1; i < imdb_title_id.size(); i++){
             imdb_title_id.set(i, String.valueOf(i));
             out.println(id++ + "," + title.get(i) + "," + year.get(i) + "," + duration.get(i)+ ","
@@ -94,7 +95,7 @@ public class ProcessCredits {
         for (int i = 1; i < imdb_title_id.size(); i++){
             for (String t: actorList.get(i)){
                 t = t.replace("\"", "").strip();
-                if (!actorsIdMap.containsKey(t)) actorsIdMap.put(t, actorId++);
+                if (!actorsIdMap.containsKey(t) && t!="") actorsIdMap.put(t, actorId++);
             }
 
         }
@@ -158,7 +159,7 @@ public class ProcessCredits {
             String[] tokens = keywords.split(",");
             keywordList.add(tokens);
         }
-        out.println("KeywordsInMovieId,KeywordsId,imdb_title_id");
+        out.println("KeywordsInMovieId,KeywordsId,MovieId");
         int keywordsInMovieId = 1;
         for (int i = 1; i < imdb_title_id.size(); i++){
             for (String t: keywordList.get(i)){
