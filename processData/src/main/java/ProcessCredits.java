@@ -19,10 +19,43 @@ public class ProcessCredits {
     public static Map<String, Integer> actorsIdMap = new HashMap<>();
     public static Map<String, Integer> keywordsIdMap = new HashMap<>();
 
+    public static void readFile(String path){
+        List<String[]> lines = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+            String line = "";
+            while ((line = reader.readLine()) != null){
+                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                for(String t : tokens) {
+                    t = t.replace("\"", "");
+                    System.out.println("> "+t);
+                }
+                imdb_title_id.add(tokens[0]);
+                title.add(tokens[1]);
+                year.add(tokens[2]);
+                genre.add(tokens[3]);
+                duration.add(tokens[4]);
+                country.add(tokens[5]);
+                language.add(tokens[6]);
+                directors.add(tokens[7]);
+                actors.add(tokens[8]);
+                description.add(tokens[9]);
+
+                System.out.println("");
+                lines.add(tokens);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void getMovieTable() throws FileNotFoundException {
         PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Movies_output.csv");
-        for (int i = 0; i < imdb_title_id.size(); i++){
-            out.println(imdb_title_id.get(i) + "," + title.get(i) + "," + year.get(i) + "," + duration.get(i)+ ","
+        int id = 1;
+        for (int i = 1; i < imdb_title_id.size(); i++){
+            imdb_title_id.set(i, String.valueOf(i));
+            out.println(id++ + "," + title.get(i) + "," + year.get(i) + "," + duration.get(i)+ ","
                     + language.get(i)+ "," + description.get(i));
         }
         out.close();
@@ -73,7 +106,7 @@ public class ProcessCredits {
 
     public static void getCollaborationTable() throws FileNotFoundException {
         PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Collaboration_output.csv");
-        out.println("imdb_title_id,ActorId,ActorName,DirectorId,DirectorName");
+        out.println("MovieId,ActorId,ActorName,DirectorId,DirectorName");
         List<String[]> DirectorList = new ArrayList<>();
         for (String aMovieDirector: directors){
             String[] tokens = aMovieDirector.split(",");
@@ -89,7 +122,7 @@ public class ProcessCredits {
                 t_director = t_director.replace("\"", "").strip();
                 for (String t_actor : actorList.get(i)) {
                     t_actor = t_actor.replace("\"", "").strip();
-                    out.println(i + "," + actorsIdMap.get(t_actor) + "," + t_actor + ","
+                    out.println(imdb_title_id.get(i) + "," + actorsIdMap.get(t_actor) + "," + t_actor + ","
                             + directorsIdMap.get(t_director) + "," + t_director);
                 }
             }
@@ -136,39 +169,10 @@ public class ProcessCredits {
         out.close();
     }
 
-    public static void readFile(String path){
-        List<String[]> lines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line = "";
-            while ((line = reader.readLine()) != null){
-                String[] tokens = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                for(String t : tokens) {
-                    t = t.replace("\"", "");
-                    System.out.println("> "+t);
-                }
-                imdb_title_id.add(tokens[0]);
-                title.add(tokens[1]);
-                year.add(tokens[2]);
-                genre.add(tokens[3]);
-                duration.add(tokens[4]);
-                country.add(tokens[5]);
-                language.add(tokens[6]);
-                directors.add(tokens[7]);
-                actors.add(tokens[8]);
-                description.add(tokens[9]);
 
-                System.out.println("");
-                lines.add(tokens);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     public static void main(String[] args) throws FileNotFoundException {
-        String path = "/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/InputData/IMDb movies.csv";
+        String path = "/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/InputData/movie_sample.csv";
         readFile(path);
         getMovieTable();
         getDirectorTable();

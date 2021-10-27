@@ -68,17 +68,18 @@ public class GenerateUsers {
     }
 
     public static void main(String[] args) throws IOException {
+        int numberOfUsers = 30;
         GenerateUsers test = new GenerateUsers();
-        List<String> emailList = test.generateRandomEmail(30);
-        List<String> userList = test.generateRandomUserName(30);
-        List<String> passwordList = test.generateRandomUserName(30);
-        List<String> firstNameList = test.generateRandomName(30);
-        List<String> lastNameList = test.generateRandomName(30);
-        List<String> phoneList = test.generatePhoneNumber(30);
+        List<String> emailList = test.generateRandomEmail(numberOfUsers);
+        List<String> userList = test.generateRandomUserName(numberOfUsers);
+        List<String> passwordList = test.generateRandomUserName(numberOfUsers);
+        List<String> firstNameList = test.generateRandomName(numberOfUsers);
+        List<String> lastNameList = test.generateRandomName(numberOfUsers);
+        List<String> phoneList = test.generatePhoneNumber(numberOfUsers);
         PrintWriter out = new PrintWriter("/Users/victoria/Desktop/5200/5200GroupProject/MovieMaster/processData/OutputData/Users_output.csv");
         int id = 1;
         out.println("UserId,UserName,Password,FirstName,LastName,Phone,Email");
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < numberOfUsers; i++) {
             out.println(id++ + "," + userList.get(i) + "," + passwordList.get(i) + "," +
                     firstNameList.get(i) + "," + lastNameList.get(i) + "," + phoneList.get(i) + ","
                     + emailList.get(i));

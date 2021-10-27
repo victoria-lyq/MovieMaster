@@ -1,4 +1,6 @@
-ProcessCredits.java
- ProcessCredits
+GenerateRating.java
+ GenerateRating
 GenerateUsers.java
  GenerateUsers
+ProcessCredits.java
+ ProcessCredits
