@@ -1,29 +1,32 @@
-package MovieMaster.model;
+package movie.model;
 
-
+import java.util.Date;
 
 public class Ratings {
 	
 	protected int ratingId;
 	protected int score;
-	protected int userId;
-	protected int movieId;
-	public Ratings(int ratingId, int score, int userId, int movieId) {
+	protected Users user;
+	protected Movies movie;
+	protected Date times;
+	public Ratings(int ratingId, int score, Users user, Movies movie, Date times) {
 		super();
 		this.ratingId = ratingId;
 		this.score = score;
-		this.userId = userId;
-		this.movieId = movieId;
+		this.user = user;
+		this.movie = movie;
+		this.times = times;
+	}
+	public Ratings(int score, Users user, Movies movie, Date times) {
+		super();
+		this.score = score;
+		this.user = user;
+		this.movie = movie;
+		this.times = times;
 	}
 	public Ratings(int ratingId) {
 		super();
 		this.ratingId = ratingId;
-	}
-	public Ratings(int score, int userId, int movieId) {
-		super();
-		this.score = score;
-		this.userId = userId;
-		this.movieId = movieId;
 	}
 	public int getRatingId() {
 		return ratingId;
@@ -37,17 +40,24 @@ public class Ratings {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	public int getUserId() {
-		return userId;
+	public Users getUser() {
+		return user;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUser(Users user) {
+		this.user = user;
 	}
-	public int getMovieId() {
-		return movieId;
+	public Movies getMovie() {
+		return movie;
 	}
-	public void setMovieId(int movieId) {
-		this.movieId = movieId;
+	public void setMovie(Movies movie) {
+		this.movie = movie;
 	}
+	public Date getTimes() {
+		return times;
+	}
+	public void setTime(Date times) {
+		this.times = times;
+	}
+
 	
 }
