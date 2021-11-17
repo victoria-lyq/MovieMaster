@@ -1,4 +1,4 @@
-package tools;
+package movie.tools;
 
 import java.sql.SQLException;
 import java.util.List;
