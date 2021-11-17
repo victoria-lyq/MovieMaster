@@ -1,15 +1,15 @@
 package movie.model;
 
 public class Users {
-	protected Integer userId;
+	protected int userId;
 	protected String password;
 	protected String userName;
 	protected String firstName;
 	protected String lastName;
 	protected String email;
-	protected String phone;
+	protected int phone;
 	
-	public Users(Integer userId, String password, String userName, String firstName, String lastName, String email, String phone) {
+	public Users(int userId, String password, String userName, String firstName, String lastName, String email, int phone) {
 		this.userId = userId;
 		this.password = password;
 		this.userName = userName;
@@ -19,12 +19,27 @@ public class Users {
 		this.phone = phone;
 		
 	}
+	
+	public Users(String password, String userName, String firstName, String lastName, String email, int phone) {
+		this.password = password;
+		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.phone = phone;
+		
+	}
+	
+	public Users(int userId) {
+		this.userId = userId;
+		
+	}
 
-	public Integer getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 	
@@ -35,10 +50,6 @@ public class Users {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-	
-	public Users(Integer userId) {
-		this.userId = userId;
 	}
 
 	public String getUserName() {
@@ -73,11 +84,11 @@ public class Users {
 		this.email = email;
 	}
 	
-	public String getPhone() {
+	public int getPhone() {
 		return phone;
 	}
 
-	public void setPhone(String phone) {
+	public void setPhone(int phone) {
 		this.phone = phone;
 	}
 }
