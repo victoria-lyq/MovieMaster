@@ -9,6 +9,10 @@ public class Recommendations {
 		this.user = user;
 		this.movie = movie;
 	}
+	public Recommendations(Users user, Movies movie) {
+		this.user = user;
+		this.movie = movie;
+	}
 	public int getRecommendationId() {
 		return recommendationId;
 	}
