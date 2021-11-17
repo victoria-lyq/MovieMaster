@@ -35,8 +35,8 @@ public class RecommendationsDao {
 			connection = connectionManager.getConnection();
 			insertStmt = connection.prepareStatement(insertRecommendations,
 				Statement.RETURN_GENERATED_KEYS);
-			insertStmt.setInt(1, recommendation.getUserId());
-			insertStmt.setInt(2, recommendation.getMovieId());
+			insertStmt.setInt(1, recommendation.getUser().getUserId());
+			insertStmt.setInt(2, recommendation.getMovie().getMovieId());
 			insertStmt.executeUpdate();
 			
 			// Retrieve the auto-generated key and set it, so it can be used by the caller.
@@ -98,6 +98,8 @@ public class RecommendationsDao {
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
+		UsersDao usersDao = UsersDao.getInstance();
+		MoviesDao moviesDao = MoviesDao.getInstance();
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectRecommendation);
@@ -107,7 +109,9 @@ public class RecommendationsDao {
 				int resultRecommendationId = results.getInt("RecommendationId");
 				int userId = results.getInt("UserId");
 				int movieId =  results.getInt("MovieId");
-				Recommendations r = new Recommendations(resultRecommendationId,userId,movieId);
+				Users user = usersDao.getUserByUserId(userId);
+				Movies movie = moviesDao.getMovieByMovieId(movieId);
+				Recommendations r = new Recommendations(resultRecommendationId,user,movie);
 				return r;
 			}
 		} catch (SQLException e) {
@@ -136,6 +140,8 @@ public class RecommendationsDao {
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
+		UsersDao usersDao = UsersDao.getInstance();
+		MoviesDao moviesDao = MoviesDao.getInstance();
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectRecommendation);
@@ -145,7 +151,9 @@ public class RecommendationsDao {
 				int recommendationId = results.getInt("RecommendationId");
 				int resultUserId = results.getInt("UserId");
 				int movieId =  results.getInt("MovieId");
-				Recommendations r = new Recommendations(recommendationId,resultUserId,movieId);
+				Users user = usersDao.getUserByUserId(resultUserId);
+				Movies movie = moviesDao.getMovieByMovieId(movieId);
+				Recommendations r = new Recommendations(recommendationId,user,movie);
 				recs.add(r);
 			}
 		} catch (SQLException e) {
@@ -175,6 +183,8 @@ public class RecommendationsDao {
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
+		UsersDao usersDao = UsersDao.getInstance();
+		MoviesDao moviesDao = MoviesDao.getInstance();
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectRecommendation);
@@ -184,7 +194,9 @@ public class RecommendationsDao {
 				int recommendationId = results.getInt("RecommendationId");
 				int userId = results.getInt("UserId");
 				int resultMovieId =  results.getInt("MovieId");
-				Recommendations r = new Recommendations(recommendationId,userId,resultMovieId);
+				Users user = usersDao.getUserByUserId(userId);
+				Movies movie = moviesDao.getMovieByMovieId(resultMovieId);
+				Recommendations r = new Recommendations(recommendationId,user,movie);
 				recs.add(r);
 			}
 		} catch (SQLException e) {

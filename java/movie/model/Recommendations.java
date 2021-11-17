@@ -2,12 +2,12 @@ package movie.model;
 
 public class Recommendations {
 	protected int recommendationId;
-	protected int userId;
-	protected int movieId;
-	public Recommendations(int recommendationId, int userId, int movieId) {
+	protected Users user;
+	protected Movies movie;
+	public Recommendations(int recommendationId, Users user, Movies movie) {
 		this.recommendationId = recommendationId;
-		this.userId = userId;
-		this.movieId = movieId;
+		this.user = user;
+		this.movie = movie;
 	}
 	public int getRecommendationId() {
 		return recommendationId;
@@ -15,16 +15,16 @@ public class Recommendations {
 	public void setRecommendationId(int recommendationId) {
 		this.recommendationId = recommendationId;
 	}
-	public int getUserId() {
-		return userId;
+	public Users getUser() {
+		return user;
 	}
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUser(Users user) {
+		this.user = user;
 	}
-	public int getMovieId() {
-		return movieId;
+	public Movies getMovie() {
+		return movie;
 	}
-	public void setMovieId(int movieId) {
-		this.movieId = movieId;
+	public void setMovie(Movies movie) {
+		this.movie = movie;
 	}
 }
