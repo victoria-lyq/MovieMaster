@@ -6,6 +6,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -29,25 +32,24 @@ public class UsersDao {
 	}
 
 	public Users create(Users user) throws SQLException {
-		String insertUser = "INSERT INTO Users(UserId,Password,UserName,FirstName,LastName,Email,Phone) VALUES(?,?,?,?,?,?,?);";
+		String insertUser = "INSERT INTO Users(Password,UserName,FirstName,LastName,Email,Phone) VALUES(?,?,?,?,?,?);";
 		Connection connection = null;
 		PreparedStatement insertStmt = null;
 		try {
 			connection = connectionManager.getConnection();
-			insertStmt = connection.prepareStatement(insertUser);
+			insertStmt = connection.prepareStatement(insertUser, Statement.RETURN_GENERATED_KEYS);
 			// PreparedStatement allows us to substitute specific types into the query template.
 			// For an overview, see:
 			// http://docs.oracle.com/javase/tutorial/jdbc/basics/prepared.html.
 			// http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
 			// For nullable fields, you can check the property first and then call setNull()
 			// as applicable.
-			insertStmt.setInt(1, user.getUserId());
-			insertStmt.setString(2, user.getPassword());
-			insertStmt.setString(3, user.getUserName());
-			insertStmt.setString(4, user.getFirstName());
-			insertStmt.setString(5, user.getLastName());
-			insertStmt.setString(6, user.getEmail());
-			insertStmt.setString(7, user.getPhone());
+			insertStmt.setString(1, user.getPassword());
+			insertStmt.setString(2, user.getUserName());
+			insertStmt.setString(3, user.getFirstName());
+			insertStmt.setString(4, user.getLastName());
+			insertStmt.setString(5, user.getEmail());
+			insertStmt.setInt(6, user.getPhone());
 			// Note that we call executeUpdate(). This is used for a INSERT/UPDATE/DELETE
 			// statements, and it returns an int for the row counts affected (or 0 if the
 			// statement returns nothing). For more information, see:
@@ -73,6 +75,35 @@ public class UsersDao {
 		}
 	}
 	
+	public Users updatePhone(Users user, int newPhone) throws SQLException {
+		// The field to update only exists in the superclass table, so we can
+		// just call the superclass method.
+		String updateUser = "UPDATE Users SET Phone=? WHERE Phone=?;";
+		Connection connection = null;
+		PreparedStatement updateStmt = null;
+		try {
+			connection = connectionManager.getConnection();
+			updateStmt = connection.prepareStatement(updateUser);
+			updateStmt.setInt(1, newPhone);
+			updateStmt.setInt(2, user.getPhone());
+			updateStmt.executeUpdate();
+			
+			// Update the person param before returning to the caller.
+			user.setPhone(newPhone);
+			return user;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(updateStmt != null) {
+				updateStmt.close();
+			}
+		}
+	}
+	
 
 	public Users getUserByUserId(Integer userId) throws SQLException {
 		String selectUser = "SELECT * FROM Users WHERE UserId=?;";
@@ -92,13 +123,13 @@ public class UsersDao {
 			// the first record). The cursor is initially positioned before the row.
 			// Furthermore, you can retrieve fields by name and by type.
 			if(results.next()) {
-				Integer resultUserId = results.getInt("UserId");
+				int resultUserId = results.getInt("UserId");
 				String password = results.getString("Password");
 				String userName = results.getString("UserName");
 				String firstName = results.getString("FirstName");
 				String lastName = results.getString("LastName");
 				String email = results.getString("Email");
-				String phone = results.getString("Phone");
+				int phone = results.getInt("Phone");
 				Users user = new Users(resultUserId, password, userName, firstName, lastName, email, phone);
 				return user;
 			}
@@ -117,6 +148,48 @@ public class UsersDao {
 			}
 		}
 		return null;
+	}
+	
+	public List<Users> getUsersFromFirstName(String firstName)
+			throws SQLException {
+		List<Users> users = new ArrayList<Users>();
+		String selectUsers =
+				
+			"SELECT * FROM Users WHERE Users.FirstName=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectUsers);
+			selectStmt.setString(1, firstName);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				int userId = results.getInt("UserId");
+				String password = results.getString("Password");
+				String userName = results.getString("UserName");
+				String resultFirstName = results.getString("FirstName");
+				String lastName = results.getString("LastName");
+				String email = results.getString("Email");
+				int phone = results.getInt("Phone");
+				Users user = new Users(userId, password, userName, resultFirstName, lastName, email, phone);
+				users.add(user);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return users;
 	}
 
 
