@@ -1,4 +1,4 @@
-package MovieMaster.dal;
+package movie.dal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import MovieMaster.model.*;
+import movie.model.*;
 
 
 
@@ -37,8 +37,8 @@ public class FavouritesDao {
 			insertStmt = connection.prepareStatement(insertFavourites,
 					Statement.RETURN_GENERATED_KEYS);
 			
-			insertStmt.setInt(1, favourite.getUserId());
-			insertStmt.setInt(2, favourite.getMovieId());
+			insertStmt.setInt(1, favourite.getUser().getUserId());
+			insertStmt.setInt(2, favourite.getMovie().getMovieId());
 			insertStmt.setBoolean(3, favourite.isRecommended());
 			insertStmt.executeUpdate();
 
@@ -106,12 +106,16 @@ public class FavouritesDao {
 			selectStmt = connection.prepareStatement(selectFavourites);
 			selectStmt.setInt(1, favoriteId);
 			results = selectStmt.executeQuery();
+			UsersDao usersdao = UsersDao.getInstance();
+			MoviesDao moviesdao = MoviesDao.getInstance();
 			if(results.next()) {
 				int favouriteId = results.getInt("FavouritesId");
 				int userId = results.getInt("UserId");
 				int movieId = results.getInt("MovieId");
 				boolean recommended = results.getBoolean("RecommendedByMovieMaster");
-				Favourites favourite = new Favourites(favouriteId, userId, movieId, recommended);
+				Users user = usersdao.getUserByUserId(userId);
+				Movies movie = moviesdao.getMovieByMovieId(movieId);
+				Favourites favourite = new Favourites(favouriteId, user, movie, recommended);
 				return favourite;
 			}
 		} catch (SQLException e) {
@@ -130,7 +134,7 @@ public class FavouritesDao {
 		}
 		return null;
 	}
-	public List<Favourites> getBlogPostsForUser(int userId) throws SQLException {
+	public List<Favourites> getFavouritesForUser(Users user) throws SQLException {
 		List<Favourites> favourites = new ArrayList<Favourites>();
 		String selectFavourites =
 				"SELECT FavouritesId, UserId, MovieId,RecommendedByMovieMaster " +
@@ -142,13 +146,15 @@ public class FavouritesDao {
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectFavourites);
-			selectStmt.setInt(1, userId);
+			selectStmt.setInt(1, user.getUserId());
 			results = selectStmt.executeQuery();
+			MoviesDao moviesdao = MoviesDao.getInstance();
 			while(results.next()) {
 				int favouriteId = results.getInt("FavouritesId");
 				int movieId = results.getInt("MovieId");
 				boolean recommended = results.getBoolean("RecommendedByMovieMaster");
-				Favourites favourite = new Favourites(favouriteId, userId, movieId, recommended);
+				Movies movie = moviesdao.getMovieByMovieId(movieId);
+				Favourites favourite = new Favourites(favouriteId, user, movie, recommended);
 				favourites.add(favourite);
 			}
 		} catch (SQLException e) {
