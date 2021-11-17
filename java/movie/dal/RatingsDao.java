@@ -1,15 +1,16 @@
-package MovieMaster.dal;
+package movie.dal;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import MovieMaster.model.*;
+import movie.model.*;
 
 
 
@@ -31,8 +32,8 @@ public class RatingsDao {
 	
 	public Ratings create(Ratings rating) throws SQLException {
 		String insertRatings =
-				"INSERT INTO Ratings(UserId, MovieId, Score) " +
-						"VALUES(?,?,?);";
+				"INSERT INTO Ratings(UserId, MovieId, Score, Time) " +
+						"VALUES(?,?,?,?);";
 		Connection connection = null;
 		PreparedStatement insertStmt = null;
 		ResultSet resultKey = null;
@@ -40,9 +41,10 @@ public class RatingsDao {
 			connection = connectionManager.getConnection();
 			insertStmt = connection.prepareStatement(insertRatings,
 					Statement.RETURN_GENERATED_KEYS);
-			insertStmt.setInt(1, rating.getUserId());
-			insertStmt.setInt(2, rating.getMovieId());
+			insertStmt.setInt(1, rating.getUser().getUserId());
+			insertStmt.setInt(2, rating.getMovie().getMovieId());
 			insertStmt.setInt(3, rating.getScore());
+			insertStmt.setTimestamp(4, new Timestamp(rating.getTimes().getTime()));
 			insertStmt.executeUpdate();
 
 			resultKey = insertStmt.getGeneratedKeys();
@@ -95,17 +97,21 @@ public class RatingsDao {
 	}
 	
 	public Ratings updateScore(Ratings rating, int newScore) throws SQLException {
-		String updateRatings = "UPDATE Ratings SET Score=? WHERE RatingId=?;";
+		String updateRatings = "UPDATE Ratings SET Score=?, Time=? WHERE RatingId=?;";
 		Connection connection = null;
 		PreparedStatement updateStmt = null;
 		try {
 			connection = connectionManager.getConnection();
 			updateStmt = connection.prepareStatement(updateRatings);
 			updateStmt.setInt(1, newScore);
-			updateStmt.setInt(2, rating.getRatingId());
+			Date newCreatedTimestamp = new Date();
+			updateStmt.setTimestamp(2, new Timestamp(newCreatedTimestamp.getTime()));
+			updateStmt.setInt(3, rating.getRatingId());
 			updateStmt.executeUpdate();
 			rating.setScore(newScore);
 
+			rating.setScore(newScore);
+			rating.setTime(newCreatedTimestamp);
 			return rating;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -131,17 +137,24 @@ public class RatingsDao {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectRating);
 			selectStmt.setInt(1, ratingId);
+			
 			results = selectStmt.executeQuery();
-//			UsersDao UsersDao = UsersDao.getInstance();
+			UsersDao usersdao = UsersDao.getInstance();
+			MoviesDao moviesdao = MoviesDao.getInstance();
 			if(results.next()) {
 				int resultRatingId = results.getInt("RatingId");
 				int userId = results.getInt("UserId");
 				int movieId = results.getInt("MovieId");
 				int score = results.getInt("Score");
-
 				
-//				Users user = UsersDao.getUserFromUserId(userId);
-				Ratings rating = new Ratings(resultRatingId, score, userId, movieId);
+				
+				Date times = new Date(results.getTimestamp("Time").getTime());
+
+				Movies movie = moviesdao.getMovieByMovieId(movieId);
+				Users user = usersdao.getUserByUserId(userId);
+				
+				
+				Ratings rating = new Ratings(resultRatingId, score, user, movie, times);
 				return rating;
 			}
 		} catch (SQLException e) {
@@ -161,25 +174,31 @@ public class RatingsDao {
 		return null;
 	}
 	
-	public List<Ratings> getRatingsForUser(int userId) throws SQLException {
+	public List<Ratings> getRatingsForUser(Users user) throws SQLException {
 		List<Ratings> ratings = new ArrayList<Ratings>();
 		String selectRatings =
 				"SELECT * " +
-						"FROM Ratings " +
-						"WHERE UserId=?;";
+				"FROM Ratings " +
+				"WHERE UserId=?;";
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectRatings);
-			selectStmt.setInt(1, userId);
+			selectStmt.setInt(1, user.getUserId());
 			results = selectStmt.executeQuery();
+			MoviesDao moviesdao = MoviesDao.getInstance();
 			while(results.next()) {
 				int resultRatingId = results.getInt("RatingId");
 				int movieId = results.getInt("MovieId");
 				int score = results.getInt("Score");
-				Ratings rating = new Ratings(resultRatingId, score, userId, movieId);
+				Date times = new Date(results.getTimestamp("Time").getTime());
+
+				Movies movie = moviesdao.getMovieByMovieId(movieId);
+				
+				
+				Ratings rating = new Ratings(resultRatingId, score, user, movie, times);
 				ratings.add(rating);
 			}
 		} catch (SQLException e) {
@@ -198,7 +217,7 @@ public class RatingsDao {
 		}
 		return ratings;
 	}
-	public List<Ratings> getRatingsForMovie(int movieId) throws SQLException {
+	public List<Ratings> getRatingsForMovie(Movies movie) throws SQLException {
 		List<Ratings> ratings = new ArrayList<Ratings>();
 		String selectRatings =
 				"SELECT * " +
@@ -210,13 +229,19 @@ public class RatingsDao {
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectRatings);
-			selectStmt.setInt(1, movieId);
+			selectStmt.setInt(1, movie.getMovieId());
 			results = selectStmt.executeQuery();
+			UsersDao usersdao = UsersDao.getInstance();
 			while(results.next()) {
 				int resultRatingId = results.getInt("RatingId");
 				int userId = results.getInt("UserId");
 				int score = results.getInt("Score");
-				Ratings rating = new Ratings(resultRatingId, score, userId, movieId);
+				Date times = new Date(results.getTimestamp("Time").getTime());
+
+				Users user = usersdao.getUserByUserId(userId);
+				
+				
+				Ratings rating = new Ratings(resultRatingId, score, user, movie, times);
 				ratings.add(rating);
 			}
 		} catch (SQLException e) {
