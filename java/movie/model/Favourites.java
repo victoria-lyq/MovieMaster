@@ -1,62 +1,52 @@
-package MovieMaster.model;
+package movie.model;
 
 public class Favourites {
 	protected int favouritesId;
-	protected int userId;
-	protected int movieId;
+	protected Users user;
+	protected Movies movie;
 	protected boolean isRecommended;
-	
-	public Favourites(int favouritesId, int userId, int movieId, boolean isRecommended) {
-
+	public Favourites(int favouritesId, Users user, Movies movie, boolean isRecommended) {
+		super();
 		this.favouritesId = favouritesId;
-		this.userId = userId;
-		this.movieId = movieId;
+		this.user = user;
+		this.movie = movie;
 		this.isRecommended = isRecommended;
 	}
-
+	public Favourites(Users user, Movies movie, boolean isRecommended) {
+		super();
+		this.user = user;
+		this.movie = movie;
+		this.isRecommended = isRecommended;
+	}
 	public Favourites(int favouritesId) {
 		super();
 		this.favouritesId = favouritesId;
 	}
-
-	public Favourites(int userId, int movieId, boolean isRecommended) {
-		super();
-		this.userId = userId;
-		this.movieId = movieId;
-		this.isRecommended = isRecommended;
-	}
-
 	public int getFavouritesId() {
 		return favouritesId;
 	}
-
 	public void setFavouritesId(int favouritesId) {
 		this.favouritesId = favouritesId;
 	}
-
-	public int getUserId() {
-		return userId;
+	public Users getUser() {
+		return user;
 	}
-
-	public void setUserId(int userId) {
-		this.userId = userId;
+	public void setUser(Users user) {
+		this.user = user;
 	}
-
-	public int getMovieId() {
-		return movieId;
+	public Movies getMovie() {
+		return movie;
 	}
-
-	public void setMovieId(int movieId) {
-		this.movieId = movieId;
+	public void setMovie(Movies movie) {
+		this.movie = movie;
 	}
-
 	public boolean isRecommended() {
 		return isRecommended;
 	}
-
 	public void setRecommended(boolean isRecommended) {
 		this.isRecommended = isRecommended;
 	}
-
+	
+	
 
 }
