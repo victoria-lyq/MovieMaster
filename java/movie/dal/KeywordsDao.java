@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+
 public class KeywordsDao {
 	protected ConnectionManager connectionManager;
 	private static KeywordsDao instance = null;
@@ -27,8 +28,8 @@ public class KeywordsDao {
 	}
 	public Keywords create(Keywords keyword) throws SQLException {
 		String insertKeyword = 
-				"INSERT INTO Keywords(keywordName)" + 
-				"VALUES(?,?);";
+			"INSERT INTO Keywords(keywordName)" + 
+			"VALUES(?,?);";
 		Connection connection = null;
 		PreparedStatement insertStmt = null;
 		ResultSet resultKey = null;
@@ -61,32 +62,30 @@ public class KeywordsDao {
 				resultKey.close();
 			}
 		}
-		public Keywords delete(Keywords keyword) throws SQLException {
-			String deleteKeyword = "DELETE FROM Keywords WHERE keywordId=?;";
-			Connection connection = null;
-			PreparedStatement deleteStmt = null;
-			try {
-				connection = connectionManager.getConnection();
-				deleteStmt = connection.prepareStatement(deleteKeyword);
-				deleteStmt.setInt(1, keyword.getKeywordId());
-				deleteStmt.executeUpdate();
-				return null;
-			}catch (SQLException e) {
-				e.printStackTrace();
-				throw e;
-			} finally {
-				if(connection != null) {
-					connection.close();
-				}
-				if(deleteStmt != null) {
-					deleteStmt.close();
-				}
-			}
-			
-		}
-		
-		
 	}
+	public Keywords delete(Keywords keyword) throws SQLException {
+		String deleteKeyword = "DELETE FROM Keywords WHERE keywordId=?;";
+		Connection connection = null;
+		PreparedStatement deleteStmt = null;
+		try {
+			connection = connectionManager.getConnection();
+			deleteStmt = connection.prepareStatement(deleteKeyword);
+			deleteStmt.setInt(1, keyword.getKeywordId());
+			deleteStmt.executeUpdate();
+			return null;
+		}catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(deleteStmt != null) {
+				deleteStmt.close();
+			}
+		}
+	}
+		
 	
 	public Keywords getKeywordById(int keywordId) throws SQLException {
 		String selectKeyword =
@@ -123,4 +122,40 @@ public class KeywordsDao {
 		}
 		return null;
 	}
+	
+	public List<Keywords> getKeywordsFromKeywordName(String keywordName) throws SQLException {
+		List<Keywords> keywords = new ArrayList<Keywords>();
+		String selectKeywords =
+			"SELECT KeywordId,KeywordName FROM Keywords WHERE KeywordName=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectKeywords);
+			selectStmt.setString(1, keywordName);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				Integer keywordId = results.getInt("KeywordId");
+				String resultKeywordName = results.getString("KeywordName");
+				Keywords keyword = new Keywords(keywordId, resultKeywordName);
+				keywords.add(keyword);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return keywords;
+	}
+	
 }

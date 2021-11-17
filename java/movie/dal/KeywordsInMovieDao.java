@@ -29,7 +29,7 @@ public class KeywordsInMovieDao {
 	}
 	
 	public KeywordsInMovie create(KeywordsInMovie keywordsInMovie) throws SQLException {
-		String insertkeywordsInMovie =
+		String insertKeywordsInMovie =
 			"INSERT INTO KeywordsInMovie(KeywordId,MovieId) " +
 			"VALUES(?,?);";
 		Connection connection = null;
@@ -37,19 +37,10 @@ public class KeywordsInMovieDao {
 		ResultSet resultKey = null;
 		try {
 			connection = connectionManager.getConnection();
-			insertStmt = connection.prepareStatement(insertkeywordsInMovie,
-				Statement.RETURN_GENERATED_KEYS);
+			insertStmt = connection.prepareStatement(insertKeywordsInMovie);
 			insertStmt.setInt(1, keywordsInMovie.getKeywordId());
 			insertStmt.setInt(2, keywordsInMovie.getMovieId());
 			insertStmt.executeUpdate();
-			resultKey = insertStmt.getGeneratedKeys();
-			int keywordsInMovieId = -1;
-			if(resultKey.next()) {
-				keywordsInMovieId = resultKey.getInt(1);
-			} else {
-				throw new SQLException("Unable to retrieve auto-generated key.");
-			}
-			keywordsInMovie.setKeywordsInMovieId(keywordsInMovieId);
 			return keywordsInMovie;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -66,6 +57,7 @@ public class KeywordsInMovieDao {
 			}
 		}
 	}
+	
 	public KeywordsInMovie delete(KeywordsInMovie keywordsInMovie) throws SQLException {
 		String deleteKeywordsInMovie = "DELETE FROM KeywordsInMovie WHERE KeywordsInMovieId=?;";
 		Connection connection = null;
@@ -103,12 +95,13 @@ public class KeywordsInMovieDao {
 			selectStmt = connection.prepareStatement(selectKeywordsInMovie);
 			selectStmt.setInt(1, keywordsInMovieId);
 			results = selectStmt.executeQuery();
-//			BlogUsersDao blogUsersDao = BlogUsersDao.getInstance();
+			MoviesDao moviesDao = MoviesDao.getInstance();
+			KeywordsDao keywordsDao = KeywordsDao.getInstance();
 			if(results.next()) {
 				int resultKeywordsInMovieId = results.getInt("keywordsInMovieIdId");
-				int resultKeywordId = results.getInt("keywordId");
-				int resultMovieId = results.getInt("movieId");
-				KeywordsInMovie keywordsInMovie = new KeywordsInMovie(resultKeywordsInMovieId, resultKeywordId, resultMovieId);
+				Movies moviesId = moviesDao.getMoviesById(movieId);
+				Keywords keywordsId = keywordsDao.getKeywordById(keywordId);
+				KeywordsInMovie keywordsInMovie = new KeywordsInMovie(resultKeywordsInMovieId, keywordsId, moviesId);
 				return keywordsInMovie;
 			}
 		} catch (SQLException e) {
@@ -127,5 +120,6 @@ public class KeywordsInMovieDao {
 		}
 		return null;
 	}
+	
 
 }
