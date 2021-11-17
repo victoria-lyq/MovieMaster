@@ -64,4 +64,147 @@ public class RecommendationsDao {
 			}
 		}
 	}
+	
+	public Recommendations delete(Recommendations recommendation) throws SQLException {
+		String deleteReview = "DELETE FROM Recommendations WHERE RecommendationId=?;";
+		Connection connection = null;
+		PreparedStatement deleteStmt = null;
+		try {
+			connection = connectionManager.getConnection();
+			deleteStmt = connection.prepareStatement(deleteReview);
+			deleteStmt.setInt(1, recommendation.getRecommendationId());
+			deleteStmt.executeUpdate();
+
+			// Return null so the caller can no longer operate on the BlogComments instance.
+			return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(deleteStmt != null) {
+				deleteStmt.close();
+			}
+		}
+	}
+	
+	public Recommendations getRecommendationById(int recommendationId)throws SQLException {
+		String selectRecommendation =
+				"SELECT RecommendationId,UserId,MovieId " +
+				"FROM Recommendations " +
+				"WHERE RecommendationId=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectRecommendation);
+			selectStmt.setInt(1, recommendationId);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				int resultRecommendationId = results.getInt("RecommendationId");
+				int userId = results.getInt("UserId");
+				int movieId =  results.getInt("MovieId");
+				Recommendations r = new Recommendations(resultRecommendationId,userId,movieId);
+				return r;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return null;
+	}
+	
+	public List<Recommendations> getRecommendationByUserId(int userId)throws SQLException {
+		List<Recommendations> recs = new ArrayList<Recommendations>();
+		String selectRecommendation =
+				"SELECT RecommendationId,UserId,MovieId " +
+				"FROM Recommendations " +
+				"WHERE UserId=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectRecommendation);
+			selectStmt.setInt(1, userId);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				int recommendationId = results.getInt("RecommendationId");
+				int resultUserId = results.getInt("UserId");
+				int movieId =  results.getInt("MovieId");
+				Recommendations r = new Recommendations(recommendationId,resultUserId,movieId);
+				recs.add(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return recs;
+	}
+	
+	
+	public List< Recommendations> getRecommendationByMovieId(int movieId)throws SQLException {
+		List<Recommendations> recs = new ArrayList<Recommendations>();
+		String selectRecommendation =
+				"SELECT RecommendationId,UserId,MovieId " +
+				"FROM Recommendations " +
+				"WHERE MovieId=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectRecommendation);
+			selectStmt.setInt(1, movieId);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				int recommendationId = results.getInt("RecommendationId");
+				int userId = results.getInt("UserId");
+				int resultMovieId =  results.getInt("MovieId");
+				Recommendations r = new Recommendations(recommendationId,userId,resultMovieId);
+				recs.add(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return recs;
+	}
+
 }
+
+	
+

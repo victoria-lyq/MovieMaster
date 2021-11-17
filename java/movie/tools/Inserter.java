@@ -13,10 +13,16 @@ public class Inserter {
 		  Movies movie2 = new Movies(2, "movie2", 2021, 120, "English", "test");
 		  Movies movie3 = new Movies(3, "movie3", 2021, 120, "French", "test");
 		  Movies movie4 = new Movies(4, "movie4", 2020, 120, "French", "test");
+		  Movies dummy = new Movies(5, "dummy", 2020, 120, "dummy", "dummy");
 		  movie1 = moviesDao.create(movie1);
 		  movie2 = moviesDao.create(movie2);
 		  movie3 = moviesDao.create(movie3);
 		  movie4 = moviesDao.create(movie4);
+		  dummy = moviesDao.create(dummy);
+		  
+		  System.out.println("test delete(Movies object)");
+		  dummy = moviesDao.delete(dummy);
+		  
 		  
 		  System.out.println("test getMovieByMovieId()");
 		  Movies m1 = moviesDao.getMovieByMovieId(1);
@@ -61,6 +67,18 @@ public class Inserter {
 		  recommendation4  = recommendationsDao.create(recommendation4);
 		  recommendation5  = recommendationsDao.create(recommendation5);
 		  
+		  System.out.println("test getMovieByUserId()");
+		  List<Recommendations> rec1 = recommendationsDao.getRecommendationByUserId(1);
+		  for (Recommendations r: rec1) {
+		  System.out.format("Reading movies: recommendationId:%s userId:%s movieId:%s \n",
+				 r.getRecommendationId(), r.getUserId(), r.getMovieId());
+		  }
 		  
+		  System.out.println("test getMovieByMovieId()");
+		  List<Recommendations> rec2 = recommendationsDao.getRecommendationByMovieId(1);
+		  for (Recommendations r: rec2) {
+		  System.out.format("Reading movies: recommendationId:%s userId:%s movieId:%s \n",
+				 r.getRecommendationId(), r.getUserId(), r.getMovieId());
+		  }
 	 }
 }
