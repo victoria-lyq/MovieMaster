@@ -30,8 +30,8 @@ public class Users {
 		
 	}
 	
-	public Users(int userId) {
-		this.userId = userId;
+	public Users(String userName) {
+		this.userName = userName;
 		
 	}
 

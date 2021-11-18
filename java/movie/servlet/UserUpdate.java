@@ -33,15 +33,15 @@ public class UserUpdate extends HttpServlet {
         req.setAttribute("messages", messages);
 
         // Retrieve user and validate.
-        String stringUserId = req.getParameter("userId");
-        int userId = Integer.parseInt(stringUserId);
-        if (stringUserId == null || stringUserId.trim().isEmpty()) {
-            messages.put("success", "Please enter a valid UserId.");
+        String userName = req.getParameter("userName");
+
+        if (userName == null || userName.trim().isEmpty()) {
+            messages.put("success", "Please enter a valid UserName.");
         } else {
         	try {
-        		Users user = usersDao.getUserByUserId(userId);
+        		Users user = usersDao.getUserByUserName(userName);
         		if(user == null) {
-        			messages.put("success", "UserId does not exist.");
+        			messages.put("success", "UserName does not exist.");
         		}
         		req.setAttribute("user", user);
         	} catch (SQLException e) {
@@ -61,23 +61,22 @@ public class UserUpdate extends HttpServlet {
         req.setAttribute("messages", messages);
 
         // Retrieve user and validate.
-        String stringUserId = req.getParameter("userId");
-        int userId = Integer.parseInt(stringUserId);
-        if (stringUserId == null || stringUserId.trim().isEmpty()) {
-            messages.put("success", "Please enter a valid UserId.");
+        String userName = req.getParameter("userName");
+        if (userName == null || userName.trim().isEmpty()) {
+            messages.put("success", "Please enter a valid UserName.");
         } else {
         	try {
-        		Users user = usersDao.getUserByUserId(userId);
+        		Users user = usersDao.getUserByUserName(userName);
         		if(user == null) {
-        			messages.put("success", "UserId does not exist. No update to perform.");
+        			messages.put("success", "UserName does not exist. No update to perform.");
         		} else {
-        			String stringNewPhone = req.getParameter("phone");
-        			int newPhone = Integer.parseInt(stringNewPhone);
-        			if (stringNewPhone == null || stringNewPhone.trim().isEmpty()) {
-        	            messages.put("success", "Please enter a valid phone.");
+        			String newPassword = req.getParameter("password");
+ 
+        			if (newPassword == null || newPassword.trim().isEmpty()) {
+        	            messages.put("success", "Please enter a valid password.");
         	        } else {
-        	        	user = usersDao.updatePhone(user, newPhone);
-        	        	messages.put("success", "Successfully updated " + newPhone);
+        	        	user = usersDao.updatePassword(user, newPassword);
+        	        	messages.put("success", "Successfully updated " + userName);
         	        }
         		}
         		req.setAttribute("user", user);
