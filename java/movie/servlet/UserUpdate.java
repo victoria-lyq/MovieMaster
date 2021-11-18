@@ -31,17 +31,22 @@ public class UserUpdate extends HttpServlet {
 		// Map for storing messages.
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
+        req.getRequestDispatcher("/UserUpdate.jsp").forward(req, resp);
 
         // Retrieve user and validate.
-        String userName = req.getParameter("userName");
+        String stringUserId = req.getParameter("userId");
+        //long testId = Integer.parseInt(req.getParameter("phone"));
+        System.out.println(stringUserId);
+       // System.out.println(testId);
 
-        if (userName == null || userName.trim().isEmpty()) {
-            messages.put("success", "Please enter a valid UserName.");
+        if (stringUserId == null || stringUserId.trim().isEmpty()) {
+            messages.put("success", "Please enter a valid UserId.");
         } else {
         	try {
-        		Users user = usersDao.getUserByUserName(userName);
+        		int userId = Integer.parseInt(stringUserId);
+        		Users user = usersDao.getUserByUserId(userId);
         		if(user == null) {
-        			messages.put("success", "UserName does not exist.");
+        			messages.put("success", "UserId does not exist.");
         		}
         		req.setAttribute("user", user);
         	} catch (SQLException e) {
@@ -61,14 +66,15 @@ public class UserUpdate extends HttpServlet {
         req.setAttribute("messages", messages);
 
         // Retrieve user and validate.
-        String userName = req.getParameter("userName");
-        if (userName == null || userName.trim().isEmpty()) {
-            messages.put("success", "Please enter a valid UserName.");
+        String stringUserId = req.getParameter("userId");
+        if (stringUserId == null || stringUserId.trim().isEmpty()) {
+            messages.put("success", "Please enter a valid UserId.");
         } else {
         	try {
-        		Users user = usersDao.getUserByUserName(userName);
+        		int userId = Integer.parseInt(stringUserId);
+        		Users user = usersDao.getUserByUserId(userId);
         		if(user == null) {
-        			messages.put("success", "UserName does not exist. No update to perform.");
+        			messages.put("success", "UserId does not exist. No update to perform.");
         		} else {
         			String newPassword = req.getParameter("password");
  
@@ -76,7 +82,7 @@ public class UserUpdate extends HttpServlet {
         	            messages.put("success", "Please enter a valid password.");
         	        } else {
         	        	user = usersDao.updatePassword(user, newPassword);
-        	        	messages.put("success", "Successfully updated " + userName);
+        	        	messages.put("success", "Successfully updated " + userId);
         	        }
         		}
         		req.setAttribute("user", user);

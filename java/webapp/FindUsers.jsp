@@ -29,6 +29,7 @@
 	<h1>Matching Users</h1>
         <table border="1">
             <tr>
+            	<th>UserId</th>
             	<th>Password</th>
                 <th>UserName</th>
                 <th>FirstName</th>
@@ -40,6 +41,7 @@
             </tr>
             <c:forEach items="${users}" var="user" >
                 <tr>
+                	<td><c:out value="${user.getUserId()}" /></td>
                 	<td><c:out value="${user.getPassword()}" /></td>
                     <td><c:out value="${user.getUserName()}" /></td>
                     <td><c:out value="${user.getFirstName()}" /></td>

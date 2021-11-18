@@ -44,21 +44,22 @@ public class UserDelete extends HttpServlet {
         req.setAttribute("messages", messages);
 
         // Retrieve and validate name.
-        String userName = req.getParameter("userName");
-        if (userName == null || userName.trim().isEmpty()) {
-            messages.put("title", "Invalid UserName");
+        String stringUserId = req.getParameter("UserId");
+        if (stringUserId == null || stringUserId.trim().isEmpty()) {
+            messages.put("title", "Invalid UserId");
             messages.put("disableSubmit", "true");
         } else {
         	// Delete the BlogUser.
-	        Users user = new Users(userName);
+	        Users user = new Users(Integer.parseInt(stringUserId));
 	        try {
+	        	int userId = Integer.parseInt(stringUserId);
 	        	user = usersDao.delete(user);
 	        	// Update the message.
 		        if (user == null) {
-		            messages.put("title", "Successfully deleted " + userName);
+		            messages.put("title", "Successfully deleted " + userId);
 		            messages.put("disableSubmit", "true");
 		        } else {
-		        	messages.put("title", "Failed to delete " + userName);
+		        	messages.put("title", "Failed to delete " + userId);
 		        	messages.put("disableSubmit", "false");
 		        }
 	        } catch (SQLException e) {
