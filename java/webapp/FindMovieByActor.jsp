@@ -11,11 +11,11 @@
 <title>Find Movie By Title</title>
 </head>
 <body>
-	<form action="findmoviebytitle" method="post">
+	<form action="findmoviebyactor" method="post">
 		<p>
-			<label for="movieTitle">Please enter the movie title you are looking for</label>
+			<label for="movieActor">Please enter the actor name you are looking for</label>
 			<br/>
-			<input id="movieTitle" name="movieTitle" value="${fn:escapeXml(param.movieTitle)}">
+			<input id="movieActor" name="movieActor" value="${fn:escapeXml(param.movieActor)}">
 		</p>
 		<p>
 			<input type="submit">

@@ -42,17 +42,18 @@ public class UserDelete extends HttpServlet {
         // Map for storing messages.
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
-
+        
         // Retrieve and validate name.
-        String stringUserId = req.getParameter("UserId");
+        String stringUserId = req.getParameter("userid");
         if (stringUserId == null || stringUserId.trim().isEmpty()) {
             messages.put("title", "Invalid UserId");
             messages.put("disableSubmit", "true");
         } else {
         	// Delete the BlogUser.
-	        Users user = new Users(Integer.parseInt(stringUserId));
+	        //Users user = new Users(Integer.parseInt(stringUserId));
 	        try {
 	        	int userId = Integer.parseInt(stringUserId);
+	        	Users user = new Users(userId);
 	        	user = usersDao.delete(user);
 	        	// Update the message.
 		        if (user == null) {

@@ -35,8 +35,10 @@ public class UserUpdate extends HttpServlet {
 
         // Retrieve user and validate.
         String stringUserId = req.getParameter("userId");
+        String stringUserPassword = req.getParameter("password");
         //long testId = Integer.parseInt(req.getParameter("phone"));
         System.out.println(stringUserId);
+        System.out.println(stringUserPassword);
        // System.out.println(testId);
 
         if (stringUserId == null || stringUserId.trim().isEmpty()) {

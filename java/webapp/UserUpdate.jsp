@@ -14,12 +14,12 @@
 	<h1>Update User Password</h1>
 	<form action="userupdate" method="post">
 		<p>
-			<label for="userid">UserId</label>
-			<input id="userid" name="userid" value="${fn:escapeXml(param.userid)}">
+			<label for="userId">UserId</label>
+			<input id="userId" name="userId" value="${fn:escapeXml(param.userId)}">
 		</p>
 		<p>
 			<label for="password">New Password</label>
-			<input id="password" name="password" value="">
+			<input id="password" name="password" value="${fn:escapeXml(param.password)}">
 		</p>
 		<p>
 			<input type="submit">

@@ -18,7 +18,6 @@
 				<label for="userid">UserId</label>
 				<input id="userid" name="userid" value="${fn:escapeXml(param.userid)}">
 			</div>
-		</p>
 		<p>
 			<span id="submitButton" <c:if test="${messages.disableSubmit}">style="display:none"</c:if>>
 			<input type="submit">

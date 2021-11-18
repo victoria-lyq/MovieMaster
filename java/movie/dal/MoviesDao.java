@@ -54,7 +54,6 @@ public class MoviesDao {
     		}
     }
     
-    
 	public Movies delete(Movies movie) throws SQLException {
 		String deleteReview = "DELETE FROM Movies WHERE MovieId=?;";
 		Connection connection = null;
@@ -246,10 +245,11 @@ public class MoviesDao {
 	public List<Movies> getMovieByActorName(String actorName)throws SQLException {
 		List<Movies> movies = new ArrayList<Movies>();
 		String selectMovies = 
-				"SELECT * FROM Movies "
-				+ "INNER JOIN Collaboration "
-				+ "ON Collaboration.MovieId = Movies.movieId "
-				+ "WHERE Collaboration.ActorName=?;";
+				"SELECT  Movies.MovieId, Movies.Title, Movies.Year, Movies.Duration, Movies.Languages, Movies.Description FROM Movies "
+						+ "INNER JOIN  Collaboration "
+						+ "on Movies.MovieId = Collaboration.MovieId "
+						+ "WHERE Collaboration.ActorName=? "
+						+ "GROUP BY Movies.MovieId;";
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
@@ -287,10 +287,11 @@ public class MoviesDao {
 	public List<Movies> getMovieByDirectorName(String directorName)throws SQLException {
 		List<Movies> movies = new ArrayList<Movies>();
 		String selectMovies = 
-				"SELECT * FROM Movies "
-				+ "INNER JOIN Collaboration "
-				+ "ON Collaboration.MovieId = Movies.movieId "
-				+ "WHERE Collaboration.DirectorName=?;";
+				"SELECT  Movies.MovieId, Movies.Title,Movies.Year, Movies.Duration, Movies.Languages, Movies.Description FROM Movies "
+						+ "INNER JOIN Collaboration "
+						+ "on Movies.MovieId = Collaboration.MovieId "
+						+ "WHERE Collaboration.DirectorName=? "
+						+ "GROUP BY Movies.MovieId;";
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
