@@ -174,7 +174,94 @@ public class RatingsDao {
 		return null;
 	}
 	
-	public List<Ratings> getRatingsForUser(Users user) throws SQLException {
+	public List<Ratings> getRatingsByUserId(int userId) throws SQLException {
+		List<Ratings> ratings = new ArrayList<Ratings>();
+		String selectRatings =
+				"SELECT * " +
+				"FROM Ratings " +
+				"WHERE UserId=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectRatings);
+			selectStmt.setInt(1, userId);
+			results = selectStmt.executeQuery();
+			MoviesDao moviesdao = MoviesDao.getInstance();
+			UsersDao userdao = UsersDao.getInstance();
+			while(results.next()) {
+				int resultRatingId = results.getInt("RatingId");
+				int movieId = results.getInt("MovieId");
+				int score = results.getInt("Score");
+				Date times = new Date(results.getTimestamp("Time").getTime());
+				Movies movie = moviesdao.getMovieByMovieId(movieId);
+				Users user = userdao.getUserByUserId(userId);
+				
+				
+				Ratings rating = new Ratings(resultRatingId, score, user, movie, times);
+				ratings.add(rating);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return ratings;
+	}
+	public List<Ratings> getRatingsByMovieId(int movieId) throws SQLException {
+		List<Ratings> ratings = new ArrayList<Ratings>();
+		String selectRatings =
+				"SELECT * " +
+						"FROM Ratings " +
+						"WHERE movieId=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectRatings);
+			selectStmt.setInt(1, movieId);
+			results = selectStmt.executeQuery();
+			UsersDao usersdao = UsersDao.getInstance();
+			MoviesDao moviesdao = MoviesDao.getInstance();
+			while(results.next()) {
+				int resultRatingId = results.getInt("RatingId");
+				int userId = results.getInt("UserId");
+				int score = results.getInt("Score");
+				Date times = new Date(results.getTimestamp("Time").getTime());
+
+				Users user = usersdao.getUserByUserId(userId);
+				Movies movie = moviesdao.getMovieByMovieId(movieId);
+				Ratings rating = new Ratings(resultRatingId, score, user, movie, times);
+				ratings.add(rating);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return ratings;
+	}
+	public List<Ratings> getRatingsForUserObject(Users user) throws SQLException {
 		List<Ratings> ratings = new ArrayList<Ratings>();
 		String selectRatings =
 				"SELECT * " +
@@ -217,7 +304,7 @@ public class RatingsDao {
 		}
 		return ratings;
 	}
-	public List<Ratings> getRatingsForMovie(Movies movie) throws SQLException {
+	public List<Ratings> getRatingsForMovieObject(Movies movie) throws SQLException {
 		List<Ratings> ratings = new ArrayList<Ratings>();
 		String selectRatings =
 				"SELECT * " +
@@ -260,5 +347,4 @@ public class RatingsDao {
 		}
 		return ratings;
 	}
-	
 }
