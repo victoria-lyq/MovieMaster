@@ -1,24 +1,23 @@
 package movie.model;
-import java.util.Date;
 
 public class KeywordsInMovie {
 	protected int keywordsInMovieId;
-	protected int keywordId;
-	protected int movieId;
+	protected Keywords keyword;
+	protected Movies movie;
 	
-	public KeywordsInMovie(int keywordsInMovieId, int keywordId, int movieId) {
+	public KeywordsInMovie(int keywordsInMovieId, Keywords keyword, Movies movie) {
 		this.keywordsInMovieId = keywordsInMovieId;
-		this.keywordId = keywordId;
-		this.movieId = movieId;
+		this.keyword = keyword;
+		this.movie = movie;
 	}
 	
 	public KeywordsInMovie(int keywordsInMovieId) {
 		this.keywordsInMovieId = keywordsInMovieId;
 	}
 	
-	public KeywordsInMovie(int keywordId, int movieId) {
-		this.keywordId = keywordId;
-		this.movieId = movieId;
+	public KeywordsInMovie(Keywords keyword, Movies movie) {
+		this.keyword = keyword;
+		this.movie = movie;
 	}
 	public int getKeywordsInMovieId() {
 		return keywordsInMovieId;
@@ -26,16 +25,16 @@ public class KeywordsInMovie {
 	public void setKeywordsInMovieId(int keywordsInMovieId) {
 		this.keywordsInMovieId = keywordsInMovieId;
 	}
-	public int getKeywordId() {
-		return keywordId;
+	public Keywords getKeyword() {
+		return keyword;
 	}
-	public void setKeywordId(int keywordId) {
-		this.keywordId = keywordId;
+	public void setKeyword(Keywords keyword) {
+		this.keyword = keyword;
 	}
-	public int getMovieId() {
-		return movieId;
+	public Movies getMovie() {
+		return movie;
 	}
-	public void setMovieId(int movieId) {
-		this.movieId = movieId;
+	public void setMovieId(Movies movie) {
+		this.movie = movie;
 	}
 }

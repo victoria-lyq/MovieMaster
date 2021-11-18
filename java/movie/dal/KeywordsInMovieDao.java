@@ -7,12 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
 
 
 public class KeywordsInMovieDao {
@@ -37,10 +33,19 @@ public class KeywordsInMovieDao {
 		ResultSet resultKey = null;
 		try {
 			connection = connectionManager.getConnection();
-			insertStmt = connection.prepareStatement(insertKeywordsInMovie);
-			insertStmt.setInt(1, keywordsInMovie.getKeywordId());
-			insertStmt.setInt(2, keywordsInMovie.getMovieId());
+			insertStmt = connection.prepareStatement(insertKeywordsInMovie,
+					Statement.RETURN_GENERATED_KEYS);
+			insertStmt.setInt(1, keywordsInMovie.getKeyword().getKeywordId());
+			insertStmt.setInt(2, keywordsInMovie.getMovie().getMovieId());
 			insertStmt.executeUpdate();
+			resultKey = insertStmt.getGeneratedKeys();
+			int keywordsInMovieId = -1;
+			if(resultKey.next()) {
+				keywordsInMovieId = resultKey.getInt(1);
+			} else {
+				throw new SQLException("Unable to retrieve auto-generated key.");
+			}
+			keywordsInMovie.setKeywordsInMovieId(keywordsInMovieId);
 			return keywordsInMovie;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -95,13 +100,15 @@ public class KeywordsInMovieDao {
 			selectStmt = connection.prepareStatement(selectKeywordsInMovie);
 			selectStmt.setInt(1, keywordsInMovieId);
 			results = selectStmt.executeQuery();
-			MoviesDao moviesDao = MoviesDao.getInstance();
 			KeywordsDao keywordsDao = KeywordsDao.getInstance();
+			MoviesDao moviesDao = MoviesDao.getInstance();
 			if(results.next()) {
-				int resultKeywordsInMovieId = results.getInt("keywordsInMovieIdId");
-				Movies moviesId = moviesDao.getMoviesById(movieId);
-				Keywords keywordsId = keywordsDao.getKeywordById(keywordId);
-				KeywordsInMovie keywordsInMovie = new KeywordsInMovie(resultKeywordsInMovieId, keywordsId, moviesId);
+				int resultKeywordsInMovieId = results.getInt("KeywordsInMovieId");
+				int keywordId = results.getInt("KeywordId");
+				int movieId = results.getInt("MovieId");
+				Keywords keyword = keywordsDao.getKeywordById(keywordId);
+				Movies movie = moviesDao.getMovieByMovieId(movieId);
+				KeywordsInMovie keywordsInMovie = new KeywordsInMovie(resultKeywordsInMovieId, keyword, movie);
 				return keywordsInMovie;
 			}
 		} catch (SQLException e) {
@@ -119,6 +126,50 @@ public class KeywordsInMovieDao {
 			}
 		}
 		return null;
+	}
+	
+	public List<KeywordsInMovie> getKeywordNameByMovieTitle(String title) throws SQLException {
+		List<KeywordsInMovie> keywordsInMovie = new ArrayList<KeywordsInMovie>();
+		String selectKeywordsInMovie =
+			"SELECT Movies.Title, KeywordsInMovie.KeywordId, KeywordsInMovie.KeywordsInMovieId, KeywordsInMovie.MovieId"
+			+ "	FROM Movies"
+			+ "	INNER JOIN KeywordsInMovie ON"
+			+ "    KeywordsInMovie.MovieId = Movies.MovieId"
+			+ "    WHERE Movies.Title = ?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectKeywordsInMovie);
+			selectStmt.setString(1, title);
+			results = selectStmt.executeQuery();
+			KeywordsDao keywordsDao = KeywordsDao.getInstance();
+			MoviesDao moviesDao = MoviesDao.getInstance();
+			while(results.next()) {
+				int keywordsInmovieId = results.getInt("KeywordsInMovieId");
+				int keywordId = results.getInt("KeywordId");
+				Keywords keyword = keywordsDao.getKeywordById(keywordId);
+				int movieId = results.getInt("movieId");
+				Movies movie = moviesDao.getMovieByMovieId(movieId);
+				KeywordsInMovie keywordInMovie = new KeywordsInMovie(keywordsInmovieId, keyword, movie);
+				keywordsInMovie.add(keywordInMovie);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return keywordsInMovie;
 	}
 	
 

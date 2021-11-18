@@ -1,6 +1,5 @@
 package movie.model;
 
-import java.util.Date;
 
 
 public class Keywords {
