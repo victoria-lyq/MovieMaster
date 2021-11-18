@@ -55,11 +55,11 @@ public class Inserter {
 		Movies dummy = new Movies(5, "dummy", 2020, 120, "dummy", "dummy");
 		dummy = moviesDao.create(dummy);
 
-		Recommendations recommendation1 = new Recommendations(0,1,1);
-		  Recommendations recommendation2 = new Recommendations(0,1,2);
-		  Recommendations recommendation3 = new Recommendations(0,1,3);
-		  Recommendations recommendation4 = new Recommendations(0,2,1);
-		  Recommendations recommendation5 = new Recommendations(0,2,4);
+		Recommendations recommendation1 = new Recommendations(0,user,movie1);
+		  Recommendations recommendation2 = new Recommendations(0,user,movie2);
+		  Recommendations recommendation3 = new Recommendations(0,user,movie3);
+		  Recommendations recommendation4 = new Recommendations(0,user2,movie1);
+		  Recommendations recommendation5 = new Recommendations(0,user2,movie4);
 		  recommendation1  = recommendationsDao.create(recommendation1);
 		  recommendation2  = recommendationsDao.create(recommendation2);
 		  recommendation3  = recommendationsDao.create(recommendation3);
@@ -117,17 +117,15 @@ public class Inserter {
 		  List<Recommendations> rec1 = recommendationsDao.getRecommendationByUserId(1);
 		  for (Recommendations r: rec1) {
 		  System.out.format("Reading movies: recommendationId:%s userId:%s movieId:%s \n",
-				 r.getRecommendationId(), r.getUserId(), r.getMovieId());
+				 r.getRecommendationId(), r.getUser().getUserId(), r.getMovie().getMovieId());
 		  }
 		  
 		  System.out.println("test getMovieByMovieId()");
 		  List<Recommendations> rec2 = recommendationsDao.getRecommendationByMovieId(1);
 		  for (Recommendations r: rec2) {
 		  System.out.format("Reading movies: recommendationId:%s userId:%s movieId:%s \n",
-				 r.getRecommendationId(), r.getUserId(), r.getMovieId());
+				 r.getRecommendationId(), r.getUser().getUserId(), r.getMovie().getMovieId());
 		  }
-
-		
 
 		//Update
 		
