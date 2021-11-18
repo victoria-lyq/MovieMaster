@@ -96,8 +96,9 @@ public class UsersDao {
 			connection = connectionManager.getConnection();
 			updateStmt = connection.prepareStatement(updateUser);
 			
-			updateStmt.setString(1, user.getUserName());
-			updateStmt.setString(2, newPassword);
+			updateStmt.setString(1, newPassword);
+			updateStmt.setString(2, user.getUserName());
+			
 			updateStmt.executeUpdate();
 			
 			// Update the person param before returning to the caller.
@@ -126,14 +127,9 @@ public class UsersDao {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectUser);
 			selectStmt.setString(1, userName);
-			// Note that we call executeQuery(). This is used for a SELECT statement
-			// because it returns a result set. For more information, see:
-			// http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
-			// http://docs.oracle.com/javase/7/docs/api/java/sql/ResultSet.html
+
 			results = selectStmt.executeQuery();
-			// You can iterate the result set (although the example below only retrieves 
-			// the first record). The cursor is initially positioned before the row.
-			// Furthermore, you can retrieve fields by name and by type.
+
 			if(results.next()) {
 				int userId = results.getInt("UserId");
 				String password = results.getString("Password");
@@ -143,6 +139,46 @@ public class UsersDao {
 				String email = results.getString("Email");
 				int phone = results.getInt("Phone");
 				Users user = new Users(userId, password, resultUserName, firstName, lastName, email, phone);
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw e;
+		} finally {
+			if(connection != null) {
+				connection.close();
+			}
+			if(selectStmt != null) {
+				selectStmt.close();
+			}
+			if(results != null) {
+				results.close();
+			}
+		}
+		return null;
+	}
+	
+	public Users getUserByUserId(int userId) throws SQLException {
+		String selectUser = "SELECT * FROM Users WHERE UserId=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectUser);
+			selectStmt.setInt(1, userId);
+
+			results = selectStmt.executeQuery();
+
+			if(results.next()) {
+				int resultUserId = results.getInt("UserId");
+				String password = results.getString("Password");
+				String userName = results.getString("UserName");
+				String firstName = results.getString("FirstName");
+				String lastName = results.getString("LastName");
+				String email = results.getString("Email");
+				int phone = results.getInt("Phone");
+				Users user = new Users(resultUserId, password, userName, firstName, lastName, email, phone);
 				return user;
 			}
 		} catch (SQLException e) {
