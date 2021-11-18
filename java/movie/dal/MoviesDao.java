@@ -242,4 +242,86 @@ public class MoviesDao {
 		}
 		return movies;
 	}
+	
+	public List<Movies> getMovieByActorName(String actorName)throws SQLException {
+		List<Movies> movies = new ArrayList<Movies>();
+		String selectMovies = 
+				"SELECT * FROM Movies "
+				+ "INNER JOIN Collaboration "
+				+ "ON Collaboration.MovieId = Movies.movieId "
+				+ "WHERE Collaboration.ActorName=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectMovies);
+			selectStmt.setString(1, actorName);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				int movieId = results.getInt("MovieId");
+				String title = results.getString("Title");
+				int year = results.getInt("Year");
+				int duration = results.getInt("Duration");
+				String language = results.getString("Languages");
+				String des = results.getString("Description");
+				Movies m = new Movies(movieId, title, year, duration, language, des);
+				movies.add(m);
+			}} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				if(connection != null) {
+					connection.close();
+				}
+				if(selectStmt != null) {
+					selectStmt.close();
+				}
+				if(results != null) {
+					results.close();
+				}
+			}
+			return movies;		
+	}
+	
+	public List<Movies> getMovieByDirectorName(String directorName)throws SQLException {
+		List<Movies> movies = new ArrayList<Movies>();
+		String selectMovies = 
+				"SELECT * FROM Movies "
+				+ "INNER JOIN Collaboration "
+				+ "ON Collaboration.MovieId = Movies.movieId "
+				+ "WHERE Collaboration.DirectorName=?;";
+		Connection connection = null;
+		PreparedStatement selectStmt = null;
+		ResultSet results = null;
+		try {
+			connection = connectionManager.getConnection();
+			selectStmt = connection.prepareStatement(selectMovies);
+			selectStmt.setString(1, directorName);
+			results = selectStmt.executeQuery();
+			while(results.next()) {
+				int movieId = results.getInt("MovieId");
+				String title = results.getString("Title");
+				int year = results.getInt("Year");
+				int duration = results.getInt("Duration");
+				String language = results.getString("Languages");
+				String des = results.getString("Description");
+				Movies m = new Movies(movieId, title, year, duration, language, des);
+				movies.add(m);
+			}} catch (SQLException e) {
+				e.printStackTrace();
+				throw e;
+			} finally {
+				if(connection != null) {
+					connection.close();
+				}
+				if(selectStmt != null) {
+					selectStmt.close();
+				}
+				if(results != null) {
+					results.close();
+				}
+			}
+			return movies;		
+	}
 }
