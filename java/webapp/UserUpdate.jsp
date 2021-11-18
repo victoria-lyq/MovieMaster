@@ -11,11 +11,11 @@
 <title>Update a User</title>
 </head>
 <body>
-	<h1>Update User</h1>
+	<h1>Update User Password</h1>
 	<form action="userupdate" method="post">
 		<p>
-			<label for="username">UserName</label>
-			<input id="username" name="username" value="${fn:escapeXml(param.username)}">
+			<label for="userid">UserId</label>
+			<input id="userid" name="userid" value="${fn:escapeXml(param.userid)}">
 		</p>
 		<p>
 			<label for="password">New Password</label>

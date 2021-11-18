@@ -15,8 +15,8 @@
 	<form action="userdelete" method="post">
 		<p>
 			<div <c:if test="${messages.disableSubmit}">style="display:none"</c:if>>
-				<label for="username">UserName</label>
-				<input id="username" name="username" value="${fn:escapeXml(param.username)}">
+				<label for="userid">UserId</label>
+				<input id="userid" name="userid" value="${fn:escapeXml(param.userid)}">
 			</div>
 		</p>
 		<p>

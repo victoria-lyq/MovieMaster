@@ -53,9 +53,11 @@ public class UserCreate extends HttpServlet {
         	String lastName = req.getParameter("lastname");
         	String email = req.getParameter("email");
         	String stringPhone = req.getParameter("phone");
-        	int phone = Integer.parseInt(stringPhone);
+        	//System.out.println(stringPhone);
+        	
 
 	        try {
+	        	int phone = Integer.parseInt(stringPhone);
 	        	// Exercise: parse the input for StatusLevel.
 	        	Users user = new Users(password, userName, firstName, lastName, email, phone);
 	        	user = usersDao.create(user);

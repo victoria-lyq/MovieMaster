@@ -89,7 +89,7 @@ public class UsersDao {
 	public Users updatePassword(Users user, String newPassword) throws SQLException {
 		// The field to update only exists in the superclass table, so we can
 		// just call the superclass method.
-		String updateUser = "UPDATE Users SET Password=? WHERE UserName=?;";
+		String updateUser = "UPDATE Users SET Password=? WHERE UserId=?;";
 		Connection connection = null;
 		PreparedStatement updateStmt = null;
 		try {
@@ -97,7 +97,7 @@ public class UsersDao {
 			updateStmt = connection.prepareStatement(updateUser);
 			
 			updateStmt.setString(1, newPassword);
-			updateStmt.setString(2, user.getUserName());
+			updateStmt.setInt(2, user.getUserId());
 			
 			updateStmt.executeUpdate();
 			
@@ -118,45 +118,45 @@ public class UsersDao {
 	}
 	
 
-	public Users getUserByUserName(String userName) throws SQLException {
-		String selectUser = "SELECT * FROM Users WHERE UserName=?;";
-		Connection connection = null;
-		PreparedStatement selectStmt = null;
-		ResultSet results = null;
-		try {
-			connection = connectionManager.getConnection();
-			selectStmt = connection.prepareStatement(selectUser);
-			selectStmt.setString(1, userName);
-
-			results = selectStmt.executeQuery();
-
-			if(results.next()) {
-				int userId = results.getInt("UserId");
-				String password = results.getString("Password");
-				String resultUserName = results.getString("UserName");
-				String firstName = results.getString("FirstName");
-				String lastName = results.getString("LastName");
-				String email = results.getString("Email");
-				int phone = results.getInt("Phone");
-				Users user = new Users(userId, password, resultUserName, firstName, lastName, email, phone);
-				return user;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			if(connection != null) {
-				connection.close();
-			}
-			if(selectStmt != null) {
-				selectStmt.close();
-			}
-			if(results != null) {
-				results.close();
-			}
-		}
-		return null;
-	}
+//	public Users getUserByUserName(String userName) throws SQLException {
+//		String selectUser = "SELECT * FROM Users WHERE UserName=?;";
+//		Connection connection = null;
+//		PreparedStatement selectStmt = null;
+//		ResultSet results = null;
+//		try {
+//			connection = connectionManager.getConnection();
+//			selectStmt = connection.prepareStatement(selectUser);
+//			selectStmt.setString(1, userName);
+//
+//			results = selectStmt.executeQuery();
+//
+//			if(results.next()) {
+//				int userId = results.getInt("UserId");
+//				String password = results.getString("Password");
+//				String resultUserName = results.getString("UserName");
+//				String firstName = results.getString("FirstName");
+//				String lastName = results.getString("LastName");
+//				String email = results.getString("Email");
+//				int phone = results.getInt("Phone");
+//				Users user = new Users(userId, password, resultUserName, firstName, lastName, email, phone);
+//				return user;
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw e;
+//		} finally {
+//			if(connection != null) {
+//				connection.close();
+//			}
+//			if(selectStmt != null) {
+//				selectStmt.close();
+//			}
+//			if(results != null) {
+//				results.close();
+//			}
+//		}
+//		return null;
+//	}
 	
 	public Users getUserByUserId(int userId) throws SQLException {
 		String selectUser = "SELECT * FROM Users WHERE UserId=?;";
@@ -242,13 +242,13 @@ public class UsersDao {
 
 
 	public Users delete(Users user) throws SQLException {
-		String deleteUser = "DELETE FROM Users WHERE UserName=?;";
+		String deleteUser = "DELETE FROM Users WHERE UserId=?;";
 		Connection connection = null;
 		PreparedStatement deleteStmt = null;
 		try {
 			connection = connectionManager.getConnection();
 			deleteStmt = connection.prepareStatement(deleteUser);
-			deleteStmt.setString(1, user.getUserName());
+			deleteStmt.setInt(1, user.getUserId());
 			deleteStmt.executeUpdate();
 
 			return null;
