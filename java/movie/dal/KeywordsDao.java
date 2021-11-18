@@ -29,25 +29,25 @@ public class KeywordsDao {
 	public Keywords create(Keywords keyword) throws SQLException {
 		String insertKeyword = 
 			"INSERT INTO Keywords(keywordName)" + 
-			"VALUES(?,?);";
+			"VALUES(?);";
 		Connection connection = null;
 		PreparedStatement insertStmt = null;
 		ResultSet resultKey = null;
 		try {
-			connection = connectionManager.getConnection();
-			insertStmt = connection.prepareStatement(insertKeyword,
-					Statement.RETURN_GENERATED_KEYS);
-			insertStmt.setString(1, keyword.getKeywordName());
-			insertStmt.executeUpdate();
-			resultKey = insertStmt.getGeneratedKeys();
-			int keywordId = -1;
-			if(resultKey.next()) {
-				keywordId = resultKey.getInt(1);
-			} else {
-				throw new SQLException("Unable to retrieve auto-generated key.");
-			}
-			keyword.setKeywordId(keywordId);
-			return keyword;
+				connection = connectionManager.getConnection();
+				insertStmt = connection.prepareStatement(insertKeyword,
+						Statement.RETURN_GENERATED_KEYS);
+				insertStmt.setString(1, keyword.getKeywordName());
+				insertStmt.executeUpdate();
+				resultKey = insertStmt.getGeneratedKeys();
+				int keywordId = -1;
+				if(resultKey.next()) {
+					keywordId = resultKey.getInt(1);
+				} else {
+					throw new SQLException("Unable to retrieve auto-generated key.");
+				}
+				keyword.setKeywordId(keywordId);
+				return keyword;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw e;
@@ -89,9 +89,9 @@ public class KeywordsDao {
 	
 	public Keywords getKeywordById(int keywordId) throws SQLException {
 		String selectKeyword =
-			"SELECT keywordId,keywordName " +
+			"SELECT KeywordId,KeywordName " +
 			"FROM Keywords " +
-			"WHERE keywordId=?;";
+			"WHERE KeywordId=?;";
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
@@ -100,9 +100,9 @@ public class KeywordsDao {
 			selectStmt = connection.prepareStatement(selectKeyword);
 			selectStmt.setInt(1, keywordId);
 			results = selectStmt.executeQuery();
-			if(results.next()) {
-				int resultKeywordId = results.getInt("keywordId");
-				String keywordName = results.getString("keywordName");
+			while(results.next()) {
+				int resultKeywordId = results.getInt("KeywordId");
+				String keywordName = results.getString("KeywordName");
 				Keywords keyword = new Keywords(resultKeywordId, keywordName);
 				return keyword;
 			}
