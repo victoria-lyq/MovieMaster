@@ -123,39 +123,39 @@ public class KeywordsDao {
 		return null;
 	}
 	
-	public List<Keywords> getKeywordsFromKeywordName(String keywordName) throws SQLException {
-		List<Keywords> keywords = new ArrayList<Keywords>();
-		String selectKeywords =
-			"SELECT KeywordId,KeywordName FROM Keywords WHERE KeywordName=?;";
-		Connection connection = null;
-		PreparedStatement selectStmt = null;
-		ResultSet results = null;
-		try {
-			connection = connectionManager.getConnection();
-			selectStmt = connection.prepareStatement(selectKeywords);
-			selectStmt.setString(1, keywordName);
-			results = selectStmt.executeQuery();
-			while(results.next()) {
-				Integer keywordId = results.getInt("KeywordId");
-				String resultKeywordName = results.getString("KeywordName");
-				Keywords keyword = new Keywords(keywordId, resultKeywordName);
-				keywords.add(keyword);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			throw e;
-		} finally {
-			if(connection != null) {
-				connection.close();
-			}
-			if(selectStmt != null) {
-				selectStmt.close();
-			}
-			if(results != null) {
-				results.close();
-			}
-		}
-		return keywords;
-	}
+//	public List<Keywords> getKeywordsFromKeywordName(String keywordName) throws SQLException {
+//		List<Keywords> keywords = new ArrayList<Keywords>();
+//		String selectKeywords =
+//			"SELECT KeywordId,KeywordName FROM Keywords WHERE KeywordName=?;";
+//		Connection connection = null;
+//		PreparedStatement selectStmt = null;
+//		ResultSet results = null;
+//		try {
+//			connection = connectionManager.getConnection();
+//			selectStmt = connection.prepareStatement(selectKeywords);
+//			selectStmt.setString(1, keywordName);
+//			results = selectStmt.executeQuery();
+//			while(results.next()) {
+//				Integer keywordId = results.getInt("KeywordId");
+//				String resultKeywordName = results.getString("KeywordName");
+//				Keywords keyword = new Keywords(keywordId, resultKeywordName);
+//				keywords.add(keyword);
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//			throw e;
+//		} finally {
+//			if(connection != null) {
+//				connection.close();
+//			}
+//			if(selectStmt != null) {
+//				selectStmt.close();
+//			}
+//			if(results != null) {
+//				results.close();
+//			}
+//		}
+//		return keywords;
+//	}
 	
 }
