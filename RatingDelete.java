@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import movie.dal.*;
 import movie.model.*;
 
-@WebServlet("/userdelete")
+@WebServlet("/ratingdelete")
 public class RatingDelete extends HttpServlet {
 	
 	protected RatingsDao ratingsDao;

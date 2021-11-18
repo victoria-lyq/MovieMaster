@@ -4,7 +4,7 @@
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -30,32 +30,7 @@
 			<br/><br/><br/>
 			<span id="successMessage"><b>${messages.success}</b></span>
 		</p>
-	</form>
-	<br/>
-	<div id="RatingCreate"><a href="RatingCreate">Create Ratings</a></div>
-	<br/>
-        <table border="1">
-            <tr>
-                <th>ratingId</th>
-                <th>score</th>
-                <th>userId</th>
-                <th>movieName</th>
-                <th>Date</th>
-                <th>Delete Rating</th>
-                <th>Update Rating</th>
-            </tr>
-            <c:forEach items="${Ratings}" var="Ratings" >
-                <tr>
-                    <td><c:out value="${Ratings.getRatingId()}" /></td>
-                    <td><c:out value="${Ratings.getScore()}" /></td>
-                    <td><c:out value="${Ratings.getUser().getUserId()}" /></td>
-                    <td><c:out value="${Ratings.getMovie().getTitle()}" /></td>
-                    <td><fmt:formatDate value="${Ratings.getTimes()}" pattern="yyyy-MM-dd"/></td>
-                    <td><a href="Delete Rating?">Delete</a></td>
-                    <td><a href="Update Rating?">Update</a></td>
-                </tr>
-            </c:forEach>
-       </table>
+	
 
 </body>
 </html>
