@@ -41,7 +41,7 @@ public class CreditCardsDao {
 			connection = connectionManager.getConnection();
 			insertStmt = connection.prepareStatement(insertCreditCard);
 			
-			insertStmt.setLong(3, creditCard.getCardNumber());
+			insertStmt.setLong(1, creditCard.getCardNumber());
 			insertStmt.setTimestamp(2, new Timestamp(creditCard.getExpiration().getTime()));
 			insertStmt.setString(3, creditCard.getUserName());
 			insertStmt.setInt(4, creditCard.getUserId());

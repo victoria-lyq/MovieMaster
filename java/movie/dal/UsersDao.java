@@ -35,8 +35,10 @@ public class UsersDao {
 		String insertUser = "INSERT INTO Users(Password,UserName,FirstName,LastName,Email,Phone) VALUES(?,?,?,?,?,?);";
 		Connection connection = null;
 		PreparedStatement insertStmt = null;
+		ResultSet resultKey = null;
 		try {
 			connection = connectionManager.getConnection();
+			insertStmt = connection.prepareStatement(insertUser);
 			insertStmt = connection.prepareStatement(insertUser, Statement.RETURN_GENERATED_KEYS);
 			// PreparedStatement allows us to substitute specific types into the query template.
 			// For an overview, see:
@@ -57,6 +59,15 @@ public class UsersDao {
 			// I'll leave it as an exercise for you to write UPDATE/DELETE methods.
 			insertStmt.executeUpdate();
 			
+			resultKey = insertStmt.getGeneratedKeys();
+			int UserId = -1;
+			if(resultKey.next()) {
+				UserId = resultKey.getInt(1);
+			} else {
+				throw new SQLException("Unable to retrieve auto-generated key.");
+			}
+			user.setUserId(UserId);
+			
 			// Note 1: if this was an UPDATE statement, then the person fields should be
 			// updated before returning to the caller.
 			// Note 2: there are no auto-generated keys, so no update to perform on the
@@ -75,21 +86,22 @@ public class UsersDao {
 		}
 	}
 	
-	public Users updatePhone(Users user, int newPhone) throws SQLException {
+	public Users updatePassword(Users user, String newPassword) throws SQLException {
 		// The field to update only exists in the superclass table, so we can
 		// just call the superclass method.
-		String updateUser = "UPDATE Users SET Phone=? WHERE Phone=?;";
+		String updateUser = "UPDATE Users SET Password=? WHERE UserName=?;";
 		Connection connection = null;
 		PreparedStatement updateStmt = null;
 		try {
 			connection = connectionManager.getConnection();
 			updateStmt = connection.prepareStatement(updateUser);
-			updateStmt.setInt(1, newPhone);
-			updateStmt.setInt(2, user.getPhone());
+			
+			updateStmt.setString(1, user.getUserName());
+			updateStmt.setString(2, newPassword);
 			updateStmt.executeUpdate();
 			
 			// Update the person param before returning to the caller.
-			user.setPhone(newPhone);
+			user.setPassword(newPassword);
 			return user;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -105,15 +117,15 @@ public class UsersDao {
 	}
 	
 
-	public Users getUserByUserId(Integer userId) throws SQLException {
-		String selectUser = "SELECT * FROM Users WHERE UserId=?;";
+	public Users getUserByUserName(String userName) throws SQLException {
+		String selectUser = "SELECT * FROM Users WHERE UserName=?;";
 		Connection connection = null;
 		PreparedStatement selectStmt = null;
 		ResultSet results = null;
 		try {
 			connection = connectionManager.getConnection();
 			selectStmt = connection.prepareStatement(selectUser);
-			selectStmt.setInt(1, userId);
+			selectStmt.setString(1, userName);
 			// Note that we call executeQuery(). This is used for a SELECT statement
 			// because it returns a result set. For more information, see:
 			// http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
@@ -123,14 +135,14 @@ public class UsersDao {
 			// the first record). The cursor is initially positioned before the row.
 			// Furthermore, you can retrieve fields by name and by type.
 			if(results.next()) {
-				int resultUserId = results.getInt("UserId");
+				int userId = results.getInt("UserId");
 				String password = results.getString("Password");
-				String userName = results.getString("UserName");
+				String resultUserName = results.getString("UserName");
 				String firstName = results.getString("FirstName");
 				String lastName = results.getString("LastName");
 				String email = results.getString("Email");
 				int phone = results.getInt("Phone");
-				Users user = new Users(resultUserId, password, userName, firstName, lastName, email, phone);
+				Users user = new Users(userId, password, resultUserName, firstName, lastName, email, phone);
 				return user;
 			}
 		} catch (SQLException e) {
@@ -194,13 +206,13 @@ public class UsersDao {
 
 
 	public Users delete(Users user) throws SQLException {
-		String deleteUser = "DELETE FROM Users WHERE UserId=?;";
+		String deleteUser = "DELETE FROM Users WHERE UserName=?;";
 		Connection connection = null;
 		PreparedStatement deleteStmt = null;
 		try {
 			connection = connectionManager.getConnection();
 			deleteStmt = connection.prepareStatement(deleteUser);
-			deleteStmt.setInt(1, user.getUserId());
+			deleteStmt.setString(1, user.getUserName());
 			deleteStmt.executeUpdate();
 
 			return null;
