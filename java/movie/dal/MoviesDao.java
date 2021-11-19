@@ -26,19 +26,30 @@ public class MoviesDao {
     
     public Movies create(Movies movie) throws SQLException {
     	String insertMovie =
-    			"INSERT INTO Movies(MovieId, Title, Year, Duration, Languages, Description) " +
-    			"VALUES(?,?,?,?,?,?);";
+    			"INSERT INTO Movies(Title, Year, Duration, Languages, Description) " +
+    			"VALUES(?,?,?,?,?);";
     		Connection connection = null;
     		PreparedStatement insertStmt = null;
+    		ResultSet resultKey = null;
     		try {
+    			
     			connection = connectionManager.getConnection();
-    			insertStmt = connection.prepareStatement(insertMovie, Statement.RETURN_GENERATED_KEYS);
-    			insertStmt.setInt(1, movie.getMovieId());
-    			insertStmt.setString(2, movie.getTitle());
-    			insertStmt.setInt(3, movie.getYear());
-    			insertStmt.setInt(4, movie.getDuration());
-    			insertStmt.setString(5, movie.getLanguages());
-    			insertStmt.setString(6, movie.getDescription());
+    			insertStmt = connection.prepareStatement(insertMovie, 
+    					Statement.RETURN_GENERATED_KEYS);
+    			insertStmt.setString(1, movie.getTitle());
+    			insertStmt.setInt(2, movie.getYear());
+    			insertStmt.setInt(3, movie.getDuration());
+    			insertStmt.setString(4, movie.getLanguages());
+    			insertStmt.setString(5, movie.getDescription());
+    			insertStmt.executeUpdate();
+    			resultKey = insertStmt.getGeneratedKeys();
+    			int movieId = -1;
+    			if(resultKey.next()) {
+    				movieId = resultKey.getInt(1);
+    			} else {
+    				throw new SQLException("Unable to retrieve auto-generated key.");
+    			}
+    			movie.setMovieId(movieId);
     			insertStmt.executeUpdate();
     			return movie;
     		} catch (SQLException e) {
