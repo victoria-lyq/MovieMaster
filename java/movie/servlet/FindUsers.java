@@ -34,14 +34,14 @@ import javax.servlet.http.HttpServletResponse;
  * 3. Run the Tomcat server at localhost.
  * 4. Point your browser to http://localhost:8080/BlogApplication/findusers.
  */
-@WebServlet("/findratingbyuserid")
-public class FindRatingByUserId extends HttpServlet {
+@WebServlet("/findusers")
+public class FindUsers extends HttpServlet {
 	
-protected RatingsDao ratingsDao;
+	protected UsersDao usersDao;
 	
 	@Override
 	public void init() throws ServletException {
-		ratingsDao = RatingsDao.getInstance();
+		usersDao = UsersDao.getInstance();
 	}
 	
 	@Override
@@ -51,25 +51,29 @@ protected RatingsDao ratingsDao;
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
 
-        List<Ratings> ratings = new ArrayList<Ratings>();
-        String stringuserId = req.getParameter("userId");
-        if (stringuserId == null || stringuserId.trim().isEmpty()) {
-            messages.put("success", "Please enter a valid userId.");
+        List<Users> users = new ArrayList<Users>();
+        
+        // Retrieve and validate name.
+        // firstname is retrieved from the URL query string.
+        String firstName = req.getParameter("firstName");
+        if (firstName == null || firstName.trim().isEmpty()) {
+            messages.put("success", "Please enter a valid name.");
         } else {
         	// Retrieve BlogUsers, and store as a message.
         	try {
-        		Integer userId = Integer.parseInt(stringuserId);
-        		ratings = ratingsDao.getRatingsByUserId(userId);
+            	users = usersDao.getUsersFromFirstName(firstName);
             } catch (SQLException e) {
     			e.printStackTrace();
     			throw new IOException(e);
             }
-        	messages.put("success", "Displaying results for " + stringuserId);
-        	messages.put("previousstringuserId", stringuserId);
+        	messages.put("success", "Displaying results for " + firstName);
+        	// Save the previous search term, so it can be used as the default
+        	// in the input box when rendering FindUsers.jsp.
+        	messages.put("previousFirstName", firstName);
         }
-        req.setAttribute("ratings", ratings);
+        req.setAttribute("users", users);
         
-        req.getRequestDispatcher("/FindRatingByUserId.jsp").forward(req, resp);
+        req.getRequestDispatcher("/FindUsers.jsp").forward(req, resp);
 	}
 	
 	@Override
@@ -79,23 +83,26 @@ protected RatingsDao ratingsDao;
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
 
-        List<Ratings> ratings = new ArrayList<Ratings>();
-        String stringuserId = req.getParameter("userId");
-        if (stringuserId == null || stringuserId.trim().isEmpty()) {
-            messages.put("success", "Please enter a valid userId.");
+        List<Users> users = new ArrayList<Users>();
+        
+        // Retrieve and validate name.
+        // firstname is retrieved from the form POST submission. By default, it
+        // is populated by the URL query string (in FindUsers.jsp).
+        String firstName = req.getParameter("firstname");
+        if (firstName == null || firstName.trim().isEmpty()) {
+            messages.put("success", "Please enter a valid name.");
         } else {
         	// Retrieve BlogUsers, and store as a message.
         	try {
-        		Integer userId = Integer.parseInt(stringuserId);
-        		ratings = ratingsDao.getRatingsByUserId(userId);
+            	users = usersDao.getUsersFromFirstName(firstName);
             } catch (SQLException e) {
     			e.printStackTrace();
     			throw new IOException(e);
             }
-        	messages.put("success", "Displaying results for " + stringuserId);
+        	messages.put("success", "Displaying results for " + firstName);
         }
-        req.setAttribute("ratings", ratings);
+        req.setAttribute("users", users);
         
-        req.getRequestDispatcher("/FindRatingByUserId.jsp").forward(req, resp);
+        req.getRequestDispatcher("/FindUsers.jsp").forward(req, resp);
     }
 }

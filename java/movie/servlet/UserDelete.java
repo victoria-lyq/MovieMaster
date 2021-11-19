@@ -1,27 +1,28 @@
 package movie.servlet;
 
+import movie.dal.*;
+import movie.model.*;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.annotation.*;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import movie.dal.*;
-import movie.model.*;
 
-@WebServlet("/ratingdelete")
-public class RatingDelete extends HttpServlet {
+@WebServlet("/userdelete")
+public class UserDelete extends HttpServlet {
 	
-	protected RatingsDao ratingsDao;
+	protected UsersDao usersDao;
 	
 	@Override
 	public void init() throws ServletException {
-		ratingsDao = RatingsDao.getInstance();
+		usersDao = UsersDao.getInstance();
 	}
 	
 	@Override
@@ -31,8 +32,8 @@ public class RatingDelete extends HttpServlet {
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
         // Provide a title and render the JSP.
-        messages.put("title", "Delete Rating");        
-        req.getRequestDispatcher("/RatingDelete.jsp").forward(req, resp);
+        messages.put("title", "Delete User");        
+        req.getRequestDispatcher("/UserDelete.jsp").forward(req, resp);
 	}
 	
 	@Override
@@ -41,24 +42,25 @@ public class RatingDelete extends HttpServlet {
         // Map for storing messages.
         Map<String, String> messages = new HashMap<String, String>();
         req.setAttribute("messages", messages);
-
+        
         // Retrieve and validate name.
-        String stringratingId = req.getParameter("ratingId");
-        if (stringratingId == null || stringratingId.trim().isEmpty()) {
-            messages.put("title", "Invalid ratingId");
+        String stringUserId = req.getParameter("userid");
+        if (stringUserId == null || stringUserId.trim().isEmpty()) {
+            messages.put("title", "Invalid UserId");
             messages.put("disableSubmit", "true");
         } else {
         	// Delete the BlogUser.
-        	int ratingId = Integer.parseInt(stringratingId);
-        	Ratings rating = new Ratings(ratingId);
+	        //Users user = new Users(Integer.parseInt(stringUserId));
 	        try {
-	        	rating = ratingsDao.delete(rating);
+	        	int userId = Integer.parseInt(stringUserId);
+	        	Users user = new Users(userId);
+	        	user = usersDao.delete(user);
 	        	// Update the message.
-		        if (rating == null) {
-		            messages.put("title", "Successfully deleted " + stringratingId);
+		        if (user == null) {
+		            messages.put("title", "Successfully deleted " + userId);
 		            messages.put("disableSubmit", "true");
 		        } else {
-		        	messages.put("title", "Failed to delete " + stringratingId);
+		        	messages.put("title", "Failed to delete " + userId);
 		        	messages.put("disableSubmit", "false");
 		        }
 	        } catch (SQLException e) {
@@ -67,6 +69,6 @@ public class RatingDelete extends HttpServlet {
 	        }
         }
         
-        req.getRequestDispatcher("/RatingDelete.jsp").forward(req, resp);
+        req.getRequestDispatcher("/UserDelete.jsp").forward(req, resp);
     }
 }
